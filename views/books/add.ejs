@@ -1,0 +1,44 @@
+<%# views/books/add.ejs %>
+
+<% if (messages.error) { %>
+<div class="container mt-3">
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <%- messages.error %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+</div>
+<% } %>
+
+<div class="container mt-4 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-plus-circle me-2"></i>Añadir Nuevo Libro
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form action="/books/add" method="post">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Nombre del Libro:</label>
+                            <input type="text" class="form-control" id="name" name="name" value="<%= name %>" autocomplete="off" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="author" class="form-label">Autor:</label>
+                            <input type="text" class="form-control" id="author" name="author" value="<%= author %>" autocomplete="off" required>
+                        </div>
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                            <a href="/books" class="btn btn-outline-secondary me-md-2">
+                                <i class="fas fa-times me-1"></i>Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-1"></i>Guardar Libro
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

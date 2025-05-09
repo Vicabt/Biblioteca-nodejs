@@ -1,0 +1,128 @@
+<%# views/books/index.ejs %>
+
+<% if (messages.success) { %>
+<div class="container mt-3">
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <%- messages.success %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+</div>
+<% } %>
+
+<% if (messages.error) { %>
+<div class="container mt-3">
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <%- messages.error %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+</div>
+<% } %>
+
+<!-- Sección para el título de la Biblioteca y el botón de Añadir Libro -->
+<div class="container mt-4 mb-4">
+    <div class="row align-items-center">
+        <div class="col">
+            <a href="/books/" class="h1 text-decoration-none text-white">
+                <i class="fas fa-book-open me-2"></i>Biblioteca
+            </a>
+        </div>
+        <div class="col-auto">
+            <a class="btn btn-custom-add btn-lg" href="/books/add">
+                <i class="fas fa-plus-circle me-1"></i> Añadir Libro
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="card shadow-sm">
+        <div class="card-header bg-white py-3">
+            <h4 class="mb-0">Listado de Libros</h4>
+        </div>
+        <div class="card-body">
+            <% if(data.length) { %>
+            <div class="table-responsive">
+                <table class="table table-hover table-striped align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Autor</th>
+                            <th scope="col" class="text-end">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <% for(var i = 0; i < data.length; i++) { %>
+                        <tr>
+                            <th scope="row"><%= (i+1) %></th>
+                            <td><%= data[i].name %></td>
+                            <td><%= data[i].author %></td>
+                            <td class="text-end">
+                                <a class="btn btn-sm btn-outline-primary me-2" href="/books/edit/<%= data[i].id %>">
+                                    <i class="fas fa-edit"></i> Editar
+                                </a>
+                                <button type="button" class="btn btn-sm btn-outline-danger"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#deleteBookModal"
+                                        data-book-id="<%= data[i].id %>"
+                                        data-book-name="<%= data[i].name %>">
+                                    <i class="fas fa-trash-alt"></i> Eliminar
+                                </button>
+                            </td>
+                        </tr>
+                    <% } %>
+                    </tbody>
+                </table>
+            </div>
+            <% } else { %>
+                <p class="text-center text-muted mt-3">
+                    No se encontraron libros. ¡<a href="/books/add">Añade uno nuevo</a>!
+                </p>
+            <% } %>
+        </div>
+    </div>
+    <div class="mt-4">
+        <a href="/" class="btn btn-secondary btn-lg">
+            <i class="fas fa-book"></i> Volver
+        </a>
+    </div>
+</div>
+
+
+<div class="modal fade" id="deleteBookModal" tabindex="-1" aria-labelledby="deleteBookModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteBookModalLabel">Confirmar Eliminación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ¿Estás seguro de que deseas eliminar el libro "<strong id="bookNameToDeleteInModal"></strong>"? Esta acción no se puede deshacer.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <a id="confirmDeleteButtonInModal" href="#" class="btn btn-danger">Eliminar</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var deleteBookModalElement = document.getElementById('deleteBookModal');
+    if (deleteBookModalElement) {
+        deleteBookModalElement.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var bookId = button.getAttribute('data-book-id');
+            var bookName = button.getAttribute('data-book-name');
+            var modalBookNameSpan = deleteBookModalElement.querySelector('#bookNameToDeleteInModal');
+            var confirmDeleteLink = deleteBookModalElement.querySelector('#confirmDeleteButtonInModal');
+            
+            if (modalBookNameSpan) {
+                modalBookNameSpan.textContent = bookName;
+            }
+            if (confirmDeleteLink) {
+                confirmDeleteLink.href = '/books/delete/' + bookId; 
+            }
+        });
+    }
+</script>

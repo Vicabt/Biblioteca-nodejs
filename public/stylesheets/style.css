@@ -1,0 +1,70 @@
+body {
+  position: relative; /* Necesario para el z-index del ::before */
+  margin: 0; /* Elimina márgenes por defecto del navegador */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Mantén una fuente legible */
+  min-height: 100vh; /* Asegura que el body ocupe al menos toda la altura de la ventana */
+  overflow-x: hidden; /* Previene barras de scroll horizontales si el blur se excede un poco */
+}
+
+body::before {
+  content: '';
+  position: fixed; /* Fijo para que cubra toda la ventana y no se mueva con el scroll */
+  top: 0;
+  left: 0;
+  width: 100vw; /* Ancho completo de la ventana */
+  height: 100vh; /* Alto completo de la ventana */
+
+  background-image: url('/images/biblioteca.jpg'); /* Ruta a tu imagen */
+  background-size: cover; /* Cubre todo el espacio disponible */
+  background-position: center center; /* Centra la imagen */
+  background-repeat: no-repeat; /* Evita que la imagen se repita */
+
+  filter: blur(8px);
+  z-index: -1; /* Coloca el pseudo-elemento detrás de todo el contenido del body */
+}
+
+a {
+  color: #00B7FF;
+}
+
+/* --- Navbar Personalizada --- */
+.navbar-custom-bg {
+  background-color: #8B4513 !important; /* SaddleBrown */
+}
+
+.navbar-custom-bg .navbar-brand,
+.navbar-custom-bg .navbar-nav .nav-link:not(.btn-custom-add) {
+  color: #F5F5DC !important; /* Beige para texto */
+}
+
+.navbar-custom-bg .navbar-nav .nav-link:not(.btn-custom-add):hover {
+  color: #e0d7c3 !important; /* Beige un poco más oscuro para hover */
+}
+
+/* Estilo para el botón "Add Book" personalizado en la Navbar */
+.btn-custom-add {
+  background-color: #F5F5DC;
+  color: #8B4513;
+  border: 1px solid #A0522D;
+  font-weight: 500;
+}
+
+.btn-custom-add:hover {
+  background-color: #e9e0c7;
+  color: #6a3c1a;
+  border-color: #8B4513;
+}
+
+/* Ajuste para el ícono del toggler (hamburguesa) para que sea visible sobre fondo marrón
+   Bootstrap 5 navbar-dark debería manejar esto, pero si no: */
+.navbar-custom-bg .navbar-toggler {
+  border-color: rgba(245, 245, 220, 0.5);
+}
+.navbar-custom-bg .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28245, 245, 220, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+/* --- Ajustes Adicionales para la Tabla y Tarjetas --- */
+.table .btn-sm i { /* Espacio entre icono y texto en botones de tabla */
+    margin-right: 0.3rem; /* o usa la clase de Bootstrap 'me-1' directamente en el HTML del icono */
+}
