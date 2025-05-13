@@ -23,7 +23,7 @@
     <div class="row align-items-center">
         <div class="col">
             <a href="/books/" class="h1 text-decoration-none text-white">
-                <i class="fas fa-book-open me-2"></i>Biblioteca
+                <i class="fas fa-book-open me-2"></i>Libros
             </a>
         </div>
         <div class="col-auto">
@@ -46,8 +46,11 @@
                     <thead class="table-light">
                         <tr>
                             <th scope="col">#</th>
-                            <th scope="col">Nombre</th>
+                            <th scope="col">Título</th>
                             <th scope="col">Autor</th>
+                            <th scope="col">Editorial</th>
+                            <th scope="col">Categoría</th>
+                            <th scope="col">Año</th>
                             <th scope="col" class="text-end">Acciones</th>
                         </tr>
                     </thead>
@@ -56,15 +59,18 @@
                         <tr>
                             <th scope="row"><%= (i+1) %></th>
                             <td><%= data[i].name %></td>
-                            <td><%= data[i].author %></td>
+                            <td><%= data[i].author_name %></td>
+                            <td><%= data[i].publisher_name %></td>
+                            <td><%= data[i].category_name %></td>
+                            <td><%= data[i].year_published %></td>
                             <td class="text-end">
-                                <a class="btn btn-sm btn-outline-primary me-2" href="/books/edit/<%= data[i].id %>">
+                                <a class="btn btn-sm btn-outline-primary me-2" href="/books/edit/<%= data[i].id_book %>">
                                     <i class="fas fa-edit"></i> Editar
                                 </a>
                                 <button type="button" class="btn btn-sm btn-outline-danger"
                                         data-bs-toggle="modal"
                                         data-bs-target="#deleteBookModal"
-                                        data-book-id="<%= data[i].id %>"
+                                        data-book-id="<%= data[i].id_book %>"
                                         data-book-name="<%= data[i].name %>">
                                     <i class="fas fa-trash-alt"></i> Eliminar
                                 </button>

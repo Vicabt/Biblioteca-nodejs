@@ -1,0 +1,49 @@
+<div class="container-fluid py-4">
+  <div class="row mb-3">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center">
+        <h2 class="fw-bold">Editoriales de Libros</h2>
+        <a href="/publishers/add" class="btn btn-danger"><i class="fa fa-plus-circle me-2"></i>Nueva Editorial</a>
+      </div>
+    </div>
+  </div>
+  <div class="row mb-3">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header bg-danger text-white fw-bold">Gestión de Editoriales</div>
+        <div class="card-body">
+          <input type="text" class="form-control mb-3" placeholder="Buscar editoriales nombre o estado..." id="searchInput">
+          <div class="table-responsive">
+            <table class="table table-bordered align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>#</th>
+                  <th>Nombre</th>
+                  <th>Estado</th>
+                  <th>Acción</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% if (publishers && publishers.length > 0) { %>
+                  <% publishers.forEach(function(publisher, idx) { %>
+                    <tr>
+                      <td><%= idx + 1 %></td>
+                      <td><%= publisher.name %></td>
+                      <td><%= publisher.state == 1 ? 'Activo' : 'Inactivo' %></td>
+                      <td>
+                        <a href="/publishers/edit/<%= publisher.id_publisher %>" class="btn btn-sm btn-primary me-1"><i class="fa fa-edit"></i> Editar</a>
+                        <a href="/publishers/delete/<%= publisher.id_publisher %>" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i> Eliminar</a>
+                      </td>
+                    </tr>
+                  <% }); %>
+                <% } else { %>
+                  <tr><td colspan="4" class="text-center">No hay editoriales registradas.</td></tr>
+                <% } %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

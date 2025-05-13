@@ -1,6 +1,6 @@
 <%# views/books/add.ejs %>
 
-<% if (messages.error) { %>
+<% if (messages && messages.error) { %>
 <div class="container mt-3">
     <div class="alert alert-danger alert-dismissible fade show" role="alert">
         <%- messages.error %>
@@ -15,18 +15,60 @@
             <div class="card shadow-sm">
                 <div class="card-header bg-primary text-white">
                     <h4 class="mb-0">
-                        <i class="fas fa-plus-circle me-2"></i>Añadir Nuevo Libro
+                        <i class="fas fa-plus-circle me-2"></i>Nuevo Libro
                     </h4>
                 </div>
                 <div class="card-body">
                     <form action="/books/add" method="post">
                         <div class="mb-3">
-                            <label for="name" class="form-label">Nombre del Libro:</label>
+                            <label for="isbn" class="form-label">ISBN:</label>
+                            <input type="text" class="form-control" id="isbn" name="isbn" value="<%= isbn %>" autocomplete="off">
+                        </div>
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Título:</label>
                             <input type="text" class="form-control" id="name" name="name" value="<%= name %>" autocomplete="off" required>
                         </div>
                         <div class="mb-3">
-                            <label for="author" class="form-label">Autor:</label>
-                            <input type="text" class="form-control" id="author" name="author" value="<%= author %>" autocomplete="off" required>
+                            <label for="id_author" class="form-label">Autor:</label>
+                            <select class="form-control" id="id_author" name="id_author" required>
+                                <option value="">Seleccione un Autor</option>
+                                <% authors.forEach(function(author) { %>
+                                    <option value="<%= author.id_author %>" <%= id_author == author.id_author ? 'selected' : '' %>><%= author.name %></option>
+                                <% }); %>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_publisher" class="form-label">Editorial:</label>
+                            <select class="form-control" id="id_publisher" name="id_publisher" required>
+                                <option value="">Seleccione Editorial</option>
+                                <% publishers.forEach(function(publisher) { %>
+                                    <option value="<%= publisher.id_publisher %>" <%= id_publisher == publisher.id_publisher ? 'selected' : '' %>><%= publisher.name %></option>
+                                <% }); %>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="year_published" class="form-label">Año de Publicación:</label>
+                            <input type="number" min="1000" max="9999" class="form-control" id="year_published" name="year_published" value="<%= year_published %>" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="num_pages" class="form-label">Num. de Páginas:</label>
+                            <input type="number" min="1" class="form-control" id="num_pages" name="num_pages" value="<%= num_pages %>">
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_category" class="form-label">Categoría:</label>
+                            <select class="form-control" id="id_category" name="id_category" required>
+                                <option value="">Seleccione una categoría</option>
+                                <% categories.forEach(function(category) { %>
+                                    <option value="<%= category.id_category %>" <%= id_category == category.id_category ? 'selected' : '' %>><%= category.name %></option>
+                                <% }); %>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="state" class="form-label">Estado:</label>
+                            <select class="form-control" id="state" name="state" required>
+                                <option value="1" <%= state == 1 ? 'selected' : '' %>>Activo</option>
+                                <option value="0" <%= state == 0 ? 'selected' : '' %>>Inactivo</option>
+                            </select>
                         </div>
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
                             <a href="/books" class="btn btn-outline-secondary me-md-2">

@@ -1,12 +1,49 @@
-
-<div class="container mt-5">
-  <h1 class="display-1 text-white"><strong> Bienvenido a la Biblioteca</h1>
-  <p class="text-white">Esta es la página principal de la aplicación CRUD de la biblioteca.</strong></p>
-
-  <div class="mt-4">
-      <a href="/books" class="btn btn-secondary btn-lg">
-          <i class="fas fa-book"></i> Ver Libros
-      </a>
+<div class="container-fluid py-4">
+  <div class="row justify-content-center">
+    <div class="col-md-5 mb-4">
+      <div class="card shadow-sm border-0">
+        <div class="card-header bg-warning text-white fw-bold fs-5">Categorías</div>
+        <div class="card-body">
+          <h5 class="card-title">Administrar categorías</h5>
+          <p class="card-text">Agregar, editar y eliminar categorías de libros.</p>
+          <a href="/categories" class="btn btn-primary me-2">Ir a Categorías</a>
+          <a href="/categories/add" class="btn btn-success">Agregar Categoría</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-5 mb-4">
+      <div class="card shadow-sm border-0">
+        <div class="card-header bg-danger text-white fw-bold fs-5">Libros</div>
+        <div class="card-body">
+          <h5 class="card-title">Administrar libros</h5>
+          <p class="card-text">Agregar, editar y eliminar libros en la Biblioteca.</p>
+          <a href="/books" class="btn btn-primary me-2">Ir a Libros</a>
+          <a href="/books/add" class="btn btn-success">Agregar Libro</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-5 mb-4">
+      <div class="card shadow-sm border-0">
+        <div class="card-header bg-info text-white fw-bold fs-5">Autores</div>
+        <div class="card-body">
+          <h5 class="card-title">Administrar autores</h5>
+          <p class="card-text">Agregar, editar y eliminar autores.</p>
+          <a href="/authors" class="btn btn-primary me-2">Ir a Autores</a>
+          <a href="/authors/add" class="btn btn-success">Agregar Autor</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-5 mb-4">
+      <div class="card shadow-sm border-0">
+        <div class="card-header bg-secondary text-white fw-bold fs-5">Editoriales</div>
+        <div class="card-body">
+          <h5 class="card-title">Administrar editoriales</h5>
+          <p class="card-text">Agregar, editar y eliminar editoriales.</p>
+          <a href="/publishers" class="btn btn-primary me-2">Ir a Editoriales</a>
+          <a href="/publishers/add" class="btn btn-success">Agregar Editorial</a>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 

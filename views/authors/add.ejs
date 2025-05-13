@@ -1,0 +1,25 @@
+<div class="container-fluid py-4">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card shadow-sm border-0">
+        <div class="card-header bg-info text-white fw-bold">Nuevo Autor</div>
+        <div class="card-body">
+          <form action="/authors/add" method="POST">
+            <div class="mb-3">
+              <label for="name" class="form-label">Nombre:</label>
+              <input type="text" class="form-control" id="name" name="name" value="<%= typeof name !== 'undefined' ? name : '' %>" required>
+            </div>
+            <div class="mb-3">
+              <label for="state" class="form-label">Estado:</label>
+              <select class="form-control" id="state" name="state" required>
+                <option value="1" <%= state == 1 ? 'selected' : '' %>>Activo</option>
+                <option value="0" <%= state == 0 ? 'selected' : '' %>>Inactivo</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Agregar Autor</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 
