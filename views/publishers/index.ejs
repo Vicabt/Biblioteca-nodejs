@@ -2,17 +2,25 @@
   <div class="row mb-3">
     <div class="col-12">
       <div class="d-flex justify-content-between align-items-center">
-        <h2 class="fw-bold">Editoriales de Libros</h2>
-        <a href="/publishers/add" class="btn btn-danger"><i class="fa fa-plus-circle me-2"></i>Nueva Editorial</a>
+        <h2 class="fw-bold text-white">Editoriales</h2>
+        <a href="/publishers/add" class="btn btn-info"><i class="fa fa-plus-circle me-2"></i>Nueva Editorial</a>
       </div>
     </div>
   </div>
   <div class="row mb-3">
     <div class="col-12">
       <div class="card">
-        <div class="card-header bg-danger text-white fw-bold">Gestión de Editoriales</div>
+        <div class="card-header bg-secondary text-white fw-bold">Gestión de Editoriales</div>
         <div class="card-body">
-          <input type="text" class="form-control mb-3" placeholder="Buscar editoriales nombre o estado..." id="searchInput">
+          <!-- Barra de búsqueda -->
+          <form class="row g-2 mb-3" method="get" action="/publishers">
+            <div class="col-md-10">
+              <input type="text" class="form-control" name="search" placeholder="Buscar editoriales por nombre..." value="<%= typeof search !== 'undefined' ? search : '' %>">
+            </div>
+            <div class="col-md-2">
+              <button type="submit" class="btn btn-primary w-100"><i class="fas fa-search"></i> Buscar</button>
+            </div>
+          </form>
           <div class="table-responsive">
             <table class="table table-bordered align-middle">
               <thead class="table-light">
@@ -24,15 +32,30 @@
                 </tr>
               </thead>
               <tbody>
-                <% if (publishers && publishers.length > 0) { %>
-                  <% publishers.forEach(function(publisher, idx) { %>
+                <% if (data && data.length > 0) { %>
+                  <% data.forEach(function(pub, idx) { %>
                     <tr>
-                      <td><%= idx + 1 %></td>
-                      <td><%= publisher.name %></td>
-                      <td><%= publisher.state == 1 ? 'Activo' : 'Inactivo' %></td>
+                      <td><%= (idx + 1) + ((page-1)*10) %></td>
+                      <td><%= pub.name %></td>                      <td>
+                        <span class="badge <%= pub.state == 1 ? 'bg-success' : 'bg-danger' %>">
+                          <%= pub.state == 1 ? 'Activo' : 'Inactivo' %>
+                        </span>
+                      </td>
                       <td>
-                        <a href="/publishers/edit/<%= publisher.id_publisher %>" class="btn btn-sm btn-primary me-1"><i class="fa fa-edit"></i> Editar</a>
-                        <a href="/publishers/delete/<%= publisher.id_publisher %>" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i> Eliminar</a>
+                        <a href="/publishers/edit/<%= pub.id_publisher %>" class="btn btn-sm btn-primary me-1"><i class="fa fa-edit"></i> Editar</a>
+                        <form action="/publishers/toggle-state/<%= pub.id_publisher %>" method="POST" class="d-inline state-toggle-form">
+                          <button type="submit" 
+                            class="btn btn-sm <%= pub.state == 1 ? 'btn-outline-warning' : 'btn-outline-success' %>"
+                            title="<%= pub.state == 1 ? 'Desactivar' : 'Activar' %>">
+                            <% if (pub.state == 1) { %>
+                              <i class="fas fa-eye-slash"></i>
+                              <span class="d-none d-md-inline">Desactivar</span>
+                            <% } else { %>
+                              <i class="fas fa-eye"></i>
+                              <span class="d-none d-md-inline">Activar</span>
+                            <% } %>
+                          </button>
+                        </form>
                       </td>
                     </tr>
                   <% }); %>
@@ -42,8 +65,43 @@
               </tbody>
             </table>
           </div>
+          <!-- Paginación -->
+          <% if (typeof totalPages !== 'undefined' && totalPages > 1) { %>
+          <nav aria-label="Paginación de editoriales">
+            <ul class="pagination justify-content-center mt-3">
+              <% for(let i = 1; i <= totalPages; i++) { %>
+                <li class="page-item <%= i === page ? 'active' : '' %>">
+                  <a class="page-link" href="?page=<%= i %>&search=<%= search %>"><%= i %></a>
+                </li>
+              <% } %>
+            </ul>
+          </nav>
+          <% } %>
         </div>
       </div>
     </div>
   </div>
-</div> 
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Restaurar la posición del scroll si existe
+    const scrollPosition = sessionStorage.getItem('scrollPosition');
+    if (scrollPosition) {
+      window.scrollTo(0, parseInt(scrollPosition));
+      sessionStorage.removeItem('scrollPosition');
+    }
+    
+    // Añadir event listeners a todos los formularios de toggle state
+    const toggleForms = document.querySelectorAll('.state-toggle-form');
+    
+    toggleForms.forEach(form => {
+      form.addEventListener('submit', function() {
+        // Guardar la posición actual del scroll antes de enviar el formulario
+        const currentScrollPos = window.pageYOffset;
+        sessionStorage.setItem('scrollPosition', currentScrollPos);
+        return true; // Permitir que el formulario se envíe normalmente
+      });
+    });
+  });
+</script>

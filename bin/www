@@ -87,4 +87,8 @@ function onListening() {
     ? 'pipe ' + addr
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
+  console.log('Servidor escuchando en ' + bind);
+  if (typeof addr !== 'string') { // Asegurarse de que es una dirección de red (no un pipe)
+      console.log('Aplicación ejecutándose en: http://localhost:' + addr.port);
+  }
 }

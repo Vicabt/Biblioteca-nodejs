@@ -19,25 +19,49 @@
 <% } %>
 
 <!-- Sección para el título de la Biblioteca y el botón de Añadir Libro -->
-<div class="container mt-4 mb-4">
+<div class="container mt-4 mb-5">
     <div class="row align-items-center">
         <div class="col">
             <a href="/books/" class="h1 text-decoration-none text-white">
                 <i class="fas fa-book-open me-2"></i>Libros
             </a>
-        </div>
-        <div class="col-auto">
-            <a class="btn btn-custom-add btn-lg" href="/books/add">
-                <i class="fas fa-plus-circle me-1"></i> Añadir Libro
-            </a>
+        </div><div class="col-auto">
+            <div class="d-flex">
+                <a class="btn btn-warning btn-lg me-2" href="/books/restore">
+                    <i class="fas fa-trash-restore me-1"></i> Restaurar Inactivos
+                </a>
+                <a class="btn btn-custom-add btn-lg" href="/books/add">
+                    <i class="fas fa-plus-circle me-1"></i> Añadir Libro
+                </a>
+            </div>
         </div>
     </div>
+    <!-- Barra de búsqueda y filtros -->
+<form class="row g-3 mb-5 mt-4" method="get" action="/books">
+    <div class="col-md-4">
+      <input type="text" class="form-control" name="search" placeholder="Buscar por título o ISBN" value="<%= typeof search !== 'undefined' ? search : '' %>">
+    </div>
+    <div class="col-md-2">
+      <select class="form-select" name="category">
+        <option value="">Todas las categorías</option>
+        <% if (typeof categories !== 'undefined') { categories.forEach(function(cat) { %>
+          <option value="<%= cat.id_category %>" <%= filterCategory == cat.id_category ? 'selected' : '' %>><%= cat.name %></option>
+        <% }); } %>
+      </select>
+    </div>
+  
+    <div class="col-md-2">
+      <button type="submit" class="btn btn-primary w-100"><i class="fas fa-search"></i> Buscar</button>
+    </div>
+  </form>
 </div>
+
+
 
 <div class="container">
     <div class="card shadow-sm">
-        <div class="card-header bg-white py-3">
-            <h4 class="mb-0">Listado de Libros</h4>
+        <div class="card-header bg-danger py-3">
+            <h4 class="mb-0 text-white">Listado de Libros</h4>
         </div>
         <div class="card-body">
             <% if(data.length) { %>
@@ -47,8 +71,7 @@
                         <tr>
                             <th scope="col">#</th>
                             <th scope="col">Título</th>
-                            <th scope="col">Autor</th>
-                            <th scope="col">Editorial</th>
+                            <th scope="col">Autor</th>                            <th scope="col">Editorial</th>
                             <th scope="col">Categoría</th>
                             <th scope="col">Año</th>
                             <th scope="col" class="text-end">Acciones</th>
@@ -59,21 +82,22 @@
                         <tr>
                             <th scope="row"><%= (i+1) %></th>
                             <td><%= data[i].name %></td>
-                            <td><%= data[i].author_name %></td>
-                            <td><%= data[i].publisher_name %></td>
+                            <td><%= data[i].author_name %></td>                            <td><%= data[i].publisher_name %></td>
                             <td><%= data[i].category_name %></td>
-                            <td><%= data[i].year_published %></td>
-                            <td class="text-end">
-                                <a class="btn btn-sm btn-outline-primary me-2" href="/books/edit/<%= data[i].id_book %>">
-                                    <i class="fas fa-edit"></i> Editar
-                                </a>
-                                <button type="button" class="btn btn-sm btn-outline-danger"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#deleteBookModal"
-                                        data-book-id="<%= data[i].id_book %>"
-                                        data-book-name="<%= data[i].name %>">
-                                    <i class="fas fa-trash-alt"></i> Eliminar
-                                </button>
+                            <td><%= data[i].year_published %></td>                            <td class="text-end">                                <div class="btn-group" role="group" aria-label="Acciones">
+                                    <a class="btn btn-sm btn-outline-primary" href="/books/edit/<%= data[i].id_book %>" title="Editar">
+                                        <i class="fas fa-edit"></i>
+                                        <span class="d-none d-md-inline">Editar</span>
+                                    </a>
+                                    <!-- Usamos un formulario POST para desactivar libros -->
+                                    <form action="/books/deactivate" method="POST" class="d-inline-block" onsubmit="return confirm('¿Estás seguro de que deseas desactivar el libro <%= data[i].name %>?');">
+                                        <input type="hidden" name="id_book" value="<%= data[i].id_book %>">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Eliminar">
+                                            <i class="fas fa-trash"></i>
+                                            <span class="d-none d-md-inline">Eliminar</span>
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     <% } %>
@@ -87,48 +111,39 @@
             <% } %>
         </div>
     </div>
-    <div class="mt-4">
-        <a href="/" class="btn btn-secondary btn-lg">
-            <i class="fas fa-book"></i> Volver
-        </a>
-    </div>
+    <!-- Controles de paginación -->
+    <% if (typeof totalPages !== 'undefined' && totalPages > 1) { %>    <nav aria-label="Paginación de libros">
+      <ul class="pagination justify-content-center mt-3">
+        <% for(let i = 1; i <= totalPages; i++) { %>
+          <li class="page-item <%= i === page ? 'active' : '' %>">
+            <a class="page-link" href="?page=<%= i %>&search=<%= search %>&category=<%= filterCategory %>&publisher=<%= filterPublisher %>"><%= i %></a>
+          </li>
+        <% } %>
+      </ul>
+    </nav>
+    <% } %>
+    
 </div>
 
 
-<div class="modal fade" id="deleteBookModal" tabindex="-1" aria-labelledby="deleteBookModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteBookModalLabel">Confirmar Eliminación</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                ¿Estás seguro de que deseas eliminar el libro "<strong id="bookNameToDeleteInModal"></strong>"? Esta acción no se puede deshacer.
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <a id="confirmDeleteButtonInModal" href="#" class="btn btn-danger">Eliminar</a>
-            </div>
-        </div>
-    </div>
-</div>
 
-<script>
-    var deleteBookModalElement = document.getElementById('deleteBookModal');
-    if (deleteBookModalElement) {
-        deleteBookModalElement.addEventListener('show.bs.modal', function (event) {
-            var button = event.relatedTarget;
-            var bookId = button.getAttribute('data-book-id');
-            var bookName = button.getAttribute('data-book-name');
-            var modalBookNameSpan = deleteBookModalElement.querySelector('#bookNameToDeleteInModal');
-            var confirmDeleteLink = deleteBookModalElement.querySelector('#confirmDeleteButtonInModal');
-            
-            if (modalBookNameSpan) {
-                modalBookNameSpan.textContent = bookName;
-            }
-            if (confirmDeleteLink) {
-                confirmDeleteLink.href = '/books/delete/' + bookId; 
-            }
+
+<script>    document.addEventListener('DOMContentLoaded', function() {
+        // Restablecer posición de desplazamiento si se guardó anteriormente
+        const savedScrollPosition = sessionStorage.getItem('scrollPosition');
+        if (savedScrollPosition) {
+            window.scrollTo(0, parseInt(savedScrollPosition));
+            sessionStorage.removeItem('scrollPosition'); // Clear after restoring
+        }
+        
+        // Añadir manejo de guardado de posición a los formularios de desactivación
+        const deactivateForms = document.querySelectorAll('form[action="/books/deactivate"]');
+        deactivateForms.forEach(form => {
+            form.addEventListener('submit', function(event) {
+                const scrollPos = window.pageYOffset || document.documentElement.scrollTop;
+                sessionStorage.setItem('scrollPosition', scrollPos);
+                // El formulario se envía normalmente
+            });
         });
-    }
+    });
 </script>

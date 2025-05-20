@@ -9,30 +9,31 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel='stylesheet' href='/stylesheets/style.css' />
-    <style>
-      .sidebar-custom {
+    <style>      .sidebar-custom {
         background: linear-gradient(180deg, #b3541e 0%, #e07a3f 100%);
         color: #fff;
         min-height: 100vh;
         display: flex;
         flex-direction: column;
-        align-items: center;
+        align-items: flex-start;
         padding-top: 2rem;
         position: relative;
       }
       .sidebar-custom .nav-link {
         color: #fff !important;
         font-weight: 500;
-        text-align: center;
+        text-align: left;
         margin-bottom: 0.5rem;
+        padding-left: 1rem;
+        width: 100%;
       }
       .sidebar-custom .nav-link.active, .sidebar-custom .nav-link:hover {
         background: #fff2e0;
         color: #b3541e !important;
         border-radius: 0.5rem;
-      }
-      .sidebar-custom .sidebar-logo {
+      }      .sidebar-custom .sidebar-logo {
         margin-bottom: 2rem;
+        align-self: center;
       }
       .sidebar-custom .sidebar-logo img {
         border: 2px solid #fff2e0;
@@ -42,9 +43,10 @@
         font-weight: bold;
         color: #fff;
         margin-bottom: 2rem;
-        text-align: center;
-      }
-      .sidebar-custom .sidebar-footer {
+        text-align: left;
+        padding-left: 1rem;
+        width: 100%;
+      }      .sidebar-custom .sidebar-footer {
         position: absolute;
         bottom: 0;
         left: 0;
@@ -52,8 +54,8 @@
         margin-top: 0;
         font-size: 0.9rem;
         color: #fff2e0;
-        text-align: center;
-        padding-bottom: 1rem;
+        text-align: left;
+        padding: 0 1rem 1rem 1rem;
       }
       .header-custom {
         background: #fff2e0;
@@ -79,18 +81,16 @@
 <body>
 <div class="container-fluid min-vh-100 d-flex flex-column p-0">
   <div class="row flex-grow-1 m-0">
-    <!-- Sidebar -->
-    <nav class="col-12 col-md-3 col-lg-2 d-md-block sidebar-custom sidebar shadow-sm p-0">
-      <div class="sidebar-logo text-center">
+    <!-- Sidebar -->    <nav class="col-12 col-md-3 col-lg-2 d-md-block sidebar-custom sidebar shadow-sm p-0">
+      <div class="sidebar-logo d-flex justify-content-center align-items-center">
         <img src="/images/biblioteca.jpg" alt="Logo" width="56" height="56" class="rounded-circle" style="object-fit:cover;">
       </div>
       <div class="sidebar-title"><%= typeof appName !== 'undefined' ? appName : 'Biblioteca CRUD' %></div>
-      <ul class="nav flex-column w-100 align-items-center">
-        <li class="nav-item w-100"><a class="nav-link" href="/dashboard"><i class="fa fa-home me-2"></i>Dashboard</a></li>
-        <li class="nav-item w-100"><a class="nav-link" href="/authors"><i class="fa fa-user me-2"></i>Autores</a></li>
-        <li class="nav-item w-100"><a class="nav-link" href="/publishers"><i class="fa fa-building me-2"></i>Editoriales</a></li>
-        <li class="nav-item w-100"><a class="nav-link" href="/categories"><i class="fa fa-tags me-2"></i>Categorías</a></li>
-        <li class="nav-item w-100"><a class="nav-link" href="/books"><i class="fa fa-book me-2"></i>Libros</a></li>
+      <ul class="nav flex-column w-100">        <li class="nav-item w-100"><a class="nav-link d-flex align-items-center" href="/"><i class="fa fa-home me-2"></i>Inicio</a></li>
+        <li class="nav-item w-100"><a class="nav-link d-flex align-items-center" href="/authors"><i class="fa fa-user me-2"></i>Autores</a></li>
+        <li class="nav-item w-100"><a class="nav-link d-flex align-items-center" href="/publishers"><i class="fa fa-building me-2"></i>Editoriales</a></li>        <li class="nav-item w-100"><a class="nav-link d-flex align-items-center" href="/categories"><i class="fa fa-tags me-2"></i>Categorías</a></li>
+        <li class="nav-item w-100"><a class="nav-link d-flex align-items-center" href="/books"><i class="fa fa-book me-2"></i>Libros</a></li>
+        <li class="nav-item w-100"><a class="nav-link d-flex align-items-center" href="/books/restore"><i class="fa fa-trash-restore me-2"></i>Restaurar Libros</a></li>
       </ul>
       <div class="sidebar-footer">
         Copyright © <%= new Date().getFullYear() %> Vicab66. Versión 1.0
@@ -100,7 +100,7 @@
     <div class="col p-0 d-flex flex-column" style="min-height:100vh;">
       <!-- Header -->
       <header class="header-custom position-relative py-3 px-4">
-        <span class="fs-4 fw-bold w-100"><%= typeof pageTitle !== 'undefined' ? pageTitle : 'Panel de Control' %></span>
+        <span class="display-5  fw-bold w-100"><%= typeof pageTitle !== 'undefined' ? pageTitle : 'Panel de Control' %></span>
         <div class="user-info d-flex align-items-center">
           <% if (typeof userImagePath !== 'undefined' && userImagePath) { %>
             <img src="<%= userImagePath %>" alt="Usuario" width="32" height="32" class="rounded-circle me-2" style="object-fit:cover;">

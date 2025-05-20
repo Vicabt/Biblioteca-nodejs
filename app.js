@@ -22,6 +22,11 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.use(expressLayouts);
+app.set('layout', 'layout');
+app.set("layout extractScripts", true);
+app.set("layout extractStyles", true);
+
+
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -39,9 +44,17 @@ app.use(session({
 
 app.use(flash());
 
+// Variables locales disponibles en todas las vistas
+app.use(function(req, res, next) {
+  res.locals.messages = req.flash();
+  res.locals.appName = 'Biblioteca CRUD';
+  next();
+});
+
+
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use('/books/', booksRouter);
+app.use('/books', booksRouter);
 app.use('/authors', authorsRouter);
 app.use('/publishers', publishersRouter);
 app.use('/categories', categoriesRouter);
