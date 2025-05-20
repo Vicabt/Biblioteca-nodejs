@@ -1,0 +1,27 @@
+<div class="container-fluid py-4">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card shadow-sm border-0">
+        <div class="card-header bg-warning text-white fw-bold">
+          <%= typeof title !== 'undefined' ? title : (category ? 'Editar Categoría' : 'Nueva Categoría') %>
+        </div>
+        <div class="card-body">
+          <form action="<%= category ? `/categories/${category.id_category}` : '/categories' %>" method="POST">
+            <div class="mb-3">
+              <label for="name" class="form-label">Nombre:</label>
+              <input type="text" class="form-control" id="name" name="name" value="<%= category ? category.name : '' %>" required>
+            </div>
+            <div class="mb-3">
+              <label for="state" class="form-label">Estado:</label>
+              <select class="form-control" id="state" name="state" required>
+                <option value="1" <%= category && category.state == 1 ? 'selected' : '' %>>Activo</option>
+                <option value="0" <%= category && category.state == 0 ? 'selected' : '' %>>Inactivo</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-primary"><%= category ? 'Guardar Cambios' : 'Agregar Categoría' %></button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

@@ -1,9 +1,10 @@
-var express = require('express');
-var router = express.Router();
-var dbConn = require('../lib/db');
+const express = require('express');
+const router = express.Router();
+const dbConn = require('../lib/db');
+const { isAuthenticated, hasRole } = require('../middleware/auth');
 
 // Listado de editoriales
-router.get('/', async function(req, res) {
+router.get('/', isAuthenticated, async function(req, res) {
   const page = parseInt(req.query.page) || 1;
   const limit = 10;
   const offset = (page - 1) * limit;

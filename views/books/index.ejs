@@ -1,6 +1,6 @@
 <%# views/books/index.ejs %>
 
-<% if (messages.success) { %>
+<% if (messages.success && messages.success.length > 0) { %>
 <div class="container mt-3">
     <div class="alert alert-success alert-dismissible fade show" role="alert">
         <%- messages.success %>
@@ -9,7 +9,7 @@
 </div>
 <% } %>
 
-<% if (messages.error) { %>
+<% if (messages.error && messages.error.length > 0) { %>
 <div class="container mt-3">
     <div class="alert alert-danger alert-dismissible fade show" role="alert">
         <%- messages.error %>
@@ -30,7 +30,7 @@
                 <a class="btn btn-warning btn-lg me-2" href="/books/restore">
                     <i class="fas fa-trash-restore me-1"></i> Restaurar Inactivos
                 </a>
-                <a class="btn btn-custom-add btn-lg" href="/books/add">
+                <a class="btn btn-custom-add btn-lg" href="/books/new">
                     <i class="fas fa-plus-circle me-1"></i> Añadir Libro
                 </a>
             </div>
@@ -84,20 +84,21 @@
                             <td><%= data[i].name %></td>
                             <td><%= data[i].author_name %></td>                            <td><%= data[i].publisher_name %></td>
                             <td><%= data[i].category_name %></td>
-                            <td><%= data[i].year_published %></td>                            <td class="text-end">                                <div class="btn-group" role="group" aria-label="Acciones">
-                                    <a class="btn btn-sm btn-outline-primary" href="/books/edit/<%= data[i].id_book %>" title="Editar">
-                                        <i class="fas fa-edit"></i>
-                                        <span class="d-none d-md-inline">Editar</span>
-                                    </a>
-                                    <!-- Usamos un formulario POST para desactivar libros -->
-                                    <form action="/books/deactivate" method="POST" class="d-inline-block" onsubmit="return confirm('¿Estás seguro de que deseas desactivar el libro <%= data[i].name %>?');">
-                                        <input type="hidden" name="id_book" value="<%= data[i].id_book %>">
-                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Eliminar">
-                                            <i class="fas fa-trash"></i>
-                                            <span class="d-none d-md-inline">Eliminar</span>
-                                        </button>
-                                    </form>
-                                </div>
+                            <td><%= data[i].year_published %></td>                            <td class="text-end">                                <% if (user && ['admin', 'librarian'].includes(user.role)) { %>
+                                    <div class="btn-group" role="group">
+                                        <a href="/books/<%= data[i].id_book %>/edit" class="btn btn-sm btn-warning" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <form action="/books/deactivate" method="POST" class="d-inline-block" 
+                                              onsubmit="return confirm('¿Estás seguro de que deseas desactivar el libro <%= data[i].name %>?');">
+                                            <input type="hidden" name="id_book" value="<%= data[i].id_book %>">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Eliminar">
+                                                <i class="fas fa-trash"></i>
+                                                <span class="d-none d-md-inline">Desactivar</span>
+                                            </button>
+                                        </form>
+                                    </div>
+                                <% } %>
                             </td>
                         </tr>
                     <% } %>
@@ -106,44 +107,35 @@
             </div>
             <% } else { %>
                 <p class="text-center text-muted mt-3">
-                    No se encontraron libros. ¡<a href="/books/add">Añade uno nuevo</a>!
+                    No se encontraron libros. ¡<a href="/books/new">Añade uno nuevo</a>!
                 </p>
             <% } %>
         </div>
     </div>
     <!-- Controles de paginación -->
-    <% if (typeof totalPages !== 'undefined' && totalPages > 1) { %>    <nav aria-label="Paginación de libros">
+    <% if (typeof totalPages !== 'undefined' && totalPages > 1) { %>
+    <nav aria-label="Paginación de libros">
       <ul class="pagination justify-content-center mt-3">
         <% for(let i = 1; i <= totalPages; i++) { %>
           <li class="page-item <%= i === page ? 'active' : '' %>">
-            <a class="page-link" href="?page=<%= i %>&search=<%= search %>&category=<%= filterCategory %>&publisher=<%= filterPublisher %>"><%= i %></a>
+            <a class="page-link" href="?page=<%= i %>&search=<%= search %>&category=<%= filterCategory %>"><%= i %></a>
           </li>
         <% } %>
       </ul>
     </nav>
     <% } %>
-    
 </div>
 
 
 
 
-<script>    document.addEventListener('DOMContentLoaded', function() {
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
         // Restablecer posición de desplazamiento si se guardó anteriormente
         const savedScrollPosition = sessionStorage.getItem('scrollPosition');
         if (savedScrollPosition) {
             window.scrollTo(0, parseInt(savedScrollPosition));
             sessionStorage.removeItem('scrollPosition'); // Clear after restoring
         }
-        
-        // Añadir manejo de guardado de posición a los formularios de desactivación
-        const deactivateForms = document.querySelectorAll('form[action="/books/deactivate"]');
-        deactivateForms.forEach(form => {
-            form.addEventListener('submit', function(event) {
-                const scrollPos = window.pageYOffset || document.documentElement.scrollTop;
-                sessionStorage.setItem('scrollPosition', scrollPos);
-                // El formulario se envía normalmente
-            });
-        });
     });
 </script>

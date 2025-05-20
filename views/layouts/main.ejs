@@ -8,7 +8,6 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel='stylesheet' href='/stylesheets/style.css' />
     <style>      .sidebar-custom {
         background: linear-gradient(180deg, #b3541e 0%, #e07a3f 100%);
         color: #fff;
@@ -91,6 +90,14 @@
         <li class="nav-item w-100"><a class="nav-link d-flex align-items-center" href="/publishers"><i class="fa fa-building me-2"></i>Editoriales</a></li>        <li class="nav-item w-100"><a class="nav-link d-flex align-items-center" href="/categories"><i class="fa fa-tags me-2"></i>Categorías</a></li>
         <li class="nav-item w-100"><a class="nav-link d-flex align-items-center" href="/books"><i class="fa fa-book me-2"></i>Libros</a></li>
         <li class="nav-item w-100"><a class="nav-link d-flex align-items-center" href="/books/restore"><i class="fa fa-trash-restore me-2"></i>Restaurar Libros</a></li>
+        <li class="nav-item w-100 mt-3">
+            <a class="nav-link d-flex align-items-center text-danger" href="/auth/logout">
+            <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
+            </a>
+        </li>
+        <% if (typeof user !== 'undefined' && user) { %>
+        
+        <% } %>
       </ul>
       <div class="sidebar-footer">
         Copyright © <%= new Date().getFullYear() %> Vicab66. Versión 1.0
@@ -100,7 +107,7 @@
     <div class="col p-0 d-flex flex-column" style="min-height:100vh;">
       <!-- Header -->
       <header class="header-custom position-relative py-3 px-4">
-        <span class="display-5  fw-bold w-100"><%= typeof pageTitle !== 'undefined' ? pageTitle : 'Panel de Control' %></span>
+        <span class="display-5  fw-bold w-100"><%= typeof pageTitle !== 'undefined' ? pageTitle : 'Panel principal' %></span>
         <div class="user-info d-flex align-items-center">
           <% if (typeof userImagePath !== 'undefined' && userImagePath) { %>
             <img src="<%= userImagePath %>" alt="Usuario" width="32" height="32" class="rounded-circle me-2" style="object-fit:cover;">
@@ -110,7 +117,7 @@
               <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm8-9a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
             </svg>
           <% } %>
-          <span class="fw-semibold"><%= typeof userName !== 'undefined' ? userName : 'Usuario' %></span>
+          <span class="fw-semibold me-3"><%= typeof userName !== 'undefined' ? userName : 'Usuario' %></span>
         </div>
       </header>
       <!-- Contenido principal -->
@@ -122,4 +129,4 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 </body>
-</html>
+</html> 

@@ -21,6 +21,18 @@
               <button type="submit" class="btn btn-primary w-100"><i class="fas fa-search"></i> Buscar</button>
             </div>
           </form>
+          <% if (messages && messages.success && messages.success.length > 0) { %>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+              <%- messages.success %>
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          <% } %>
+          <% if (messages && messages.error && messages.error.length > 0) { %>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+              <%- messages.error %>
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          <% } %>
           <div class="table-responsive">
             <table class="table table-bordered align-middle">
               <thead class="table-light">
@@ -42,7 +54,7 @@
                         </span>
                       </td>
                       <td>
-                        <a href="/categories/edit/<%= cat.id_category %>" class="btn btn-sm btn-primary me-1"><i class="fa fa-edit"></i> Editar</a>
+                        <a href="/categories/<%= cat.id_category %>/edit" class="btn btn-sm btn-primary me-1"><i class="fa fa-edit"></i> Editar</a>
                         <form action="/categories/toggle-state/<%= cat.id_category %>" method="POST" class="d-inline state-toggle-form">
                           <button type="submit" 
                             class="btn btn-sm <%= cat.state == 1 ? 'btn-outline-warning' : 'btn-outline-success' %>"

@@ -1,4 +1,3 @@
-
 <% if (messages.success) { %>
 <div class="container mt-3">
     <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -17,36 +16,46 @@
 </div>
 <% } %>
 
-<!-- Sección para el título de la Restauración y el botón de Volver -->
+<!-- Sección para el título y botones -->
 <div class="container mt-4 mb-5">
     <div class="row align-items-center">
         <div class="col">
-            <h1 class="text-white">
-                <i class="fas fa-trash-restore me-2"></i>Restaurar Libros
+            <h1 class="text-danger">
+                <i class="fas fa-trash-restore me-2"></i>Restaurar Libros Inactivos
             </h1>
-            <p class="text-white-50">Listado de libros inactivos que pueden ser restaurados.</p>
         </div>
         <div class="col-auto">
-            <a class="btn btn-outline-light btn-lg" href="/books/">
+            <a href="/books" class="btn btn-primary btn-lg">
                 <i class="fas fa-arrow-left me-1"></i> Volver a Libros
             </a>
         </div>
     </div>
+
+    <!-- Barra de búsqueda -->
+    <form class="row g-3 mb-5 mt-4" method="get" action="/books/restore">
+        <div class="col-md-6">
+            <input type="text" class="form-control" name="search" placeholder="Buscar por título o ISBN" value="<%= typeof search !== 'undefined' ? search : '' %>">
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="fas fa-search"></i> Buscar
+            </button>
+        </div>
+    </form>
 </div>
 
 <div class="container">
     <div class="card shadow-sm">
-        <div class="card-header bg-warning py-3">
+        <div class="card-header bg-danger py-3">
             <h4 class="mb-0 text-white">Libros Inactivos</h4>
         </div>
         <div class="card-body">
-            <% if(data && data.length > 0) { %>
+            <% if(data.length) { %>
             <div class="table-responsive">
                 <table class="table table-hover table-striped align-middle">
                     <thead class="table-light">
                         <tr>
                             <th scope="col">#</th>
-                            <th scope="col">ISBN</th>
                             <th scope="col">Título</th>
                             <th scope="col">Autor</th>
                             <th scope="col">Editorial</th>
@@ -56,23 +65,18 @@
                         </tr>
                     </thead>
                     <tbody>
-                    <% for(var i = 0; i < data.length; i++) { %>
-                        <tr>
-                            <th scope="row"><%= (i+1) + ((page-1)*10) %></th>
-                            <td><%= data[i].isbn %></td>
+                    <% for(var i = 0; i < data.length; i++) { %>                        <tr>
+                            <th scope="row"><%= (i+1) %></th>
                             <td><%= data[i].name %></td>
                             <td><%= data[i].author_name %></td>
                             <td><%= data[i].publisher_name %></td>
                             <td><%= data[i].category_name %></td>
                             <td><%= data[i].year_published %></td>
                             <td class="text-end">
-                                <form action="/books/activate/<%= data[i].id_book %>" method="POST" class="d-inline state-toggle-form">
-                                    <input type="hidden" name="currentPage" value="<%= page %>">
-                                    <button type="submit" 
-                                        class="btn btn-sm btn-outline-success"
-                                        title="Activar Libro">
-                                        <i class="fas fa-check-circle"></i>
-                                        <span class="d-none d-md-inline ms-1">Activar</span>
+                                <form action="/books/restore/<%= data[i].id_book %>" method="POST" class="d-inline-block" onsubmit="return confirm('¿Estás seguro de que deseas restaurar el libro <%= data[i].name %>?');">
+                                    <button type="submit" class="btn btn-sm btn-success" title="Restaurar">
+                                        <i class="fas fa-trash-restore"></i>
+                                        <span class="d-none d-md-inline">Restaurar</span>
                                     </button>
                                 </form>
                             </td>
@@ -82,58 +86,23 @@
                 </table>
             </div>
             <% } else { %>
-                <div class="text-center py-5">
-                    <i class="fas fa-info-circle fa-3x text-muted mb-3"></i>
-                    <p class="lead text-muted">No hay libros inactivos para restaurar.</p>
-                    <a href="/books/" class="btn btn-primary mt-2">
-                        <i class="fas fa-arrow-left me-1"></i> Volver a Libros
-                    </a>
-                </div>
+                <p class="text-center text-muted mt-3">
+                    No hay libros inactivos para restaurar.
+                </p>
             <% } %>
         </div>
     </div>
+
     <!-- Controles de paginación -->
     <% if (typeof totalPages !== 'undefined' && totalPages > 1) { %>
     <nav aria-label="Paginación de libros inactivos">
-      <ul class="pagination justify-content-center mt-3">
-        <% if (page > 1) { %>
-          <li class="page-item">
-            <a class="page-link" href="?page=<%= page-1 %>" aria-label="Anterior">
-              <span aria-hidden="true">&laquo;</span>
-              <span class="sr-only">Anterior</span>
-            </a>
-          </li>
-        <% } else { %>
-          <li class="page-item disabled">
-            <span class="page-link" aria-label="Anterior">
-              <span aria-hidden="true">&laquo;</span>
-              <span class="sr-only">Anterior</span>
-            </span>
-          </li>
-        <% } %>
-        
-        <% for(let i = 1; i <= totalPages; i++) { %>
-          <li class="page-item <%= i === page ? 'active' : '' %>">
-            <a class="page-link" href="?page=<%= i %>"><%= i %></a>
-          </li>
-        <% } %>
-        
-        <% if (page < totalPages) { %>
-          <li class="page-item">
-            <a class="page-link" href="?page=<%= page+1 %>" aria-label="Siguiente">
-              <span aria-hidden="true">&raquo;</span>
-              <span class="sr-only">Siguiente</span>
-            </a>
-          </li>
-        <% } else { %>
-          <li class="page-item disabled">
-            <span class="page-link" aria-label="Siguiente">
-              <span aria-hidden="true">&raquo;</span>
-              <span class="sr-only">Siguiente</span>
-            </span>
-          </li>
-        <% } %>
-      </ul>
+        <ul class="pagination justify-content-center mt-3">
+            <% for(let i = 1; i <= totalPages; i++) { %>
+                <li class="page-item <%= i === page ? 'active' : '' %>">
+                    <a class="page-link" href="?page=<%= i %>&search=<%= search %>"><%= i %></a>
+                </li>
+            <% } %>
+        </ul>
     </nav>
     <% } %>
 </div>
