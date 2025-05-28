@@ -1,0 +1,102 @@
+<div class="container mt-4">
+    <h1>Gestión de Préstamos</h1>    <% if (messages && messages.error && messages.error.length > 0) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <%= messages.error %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <% } %>
+    <% if (messages && messages.success && messages.success.length > 0) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <%= messages.success %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <% } %>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <a href="/loans/new" class="btn btn-primary">Registrar Nuevo Préstamo</a>
+    </div>
+
+    <!-- Filtros -->
+    <form method="GET" action="/loans" class="mb-4 p-3 border rounded bg-light">
+        <div class="row g-3 align-items-end">
+            <div class="col-md-3">
+                <label for="status_filter" class="form-label">Estado:</label>                <select name="status_filter" id="status_filter" class="form-select">
+                    <option value="">Todos</option>
+                    <option value="solicitado" <%= (typeof queryParams !== 'undefined' && queryParams.status_filter === 'solicitado') ? 'selected' : '' %>>Solicitado</option>
+                    <option value="aprobado" <%= (typeof queryParams !== 'undefined' && queryParams.status_filter === 'aprobado') ? 'selected' : '' %>>Aprobado</option>
+                    <option value="devuelto" <%= (typeof queryParams !== 'undefined' && queryParams.status_filter === 'devuelto') ? 'selected' : '' %>>Devuelto</option>
+                    <option value="vencido" <%= (typeof queryParams !== 'undefined' && queryParams.status_filter === 'vencido') ? 'selected' : '' %>>Vencido</option>
+                    <option value="rechazado" <%= (typeof queryParams !== 'undefined' && queryParams.status_filter === 'rechazado') ? 'selected' : '' %>>Rechazado</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="user_search" class="form-label">Usuario (Nombre o Email):</label>
+                <input type="text" name="user_search" id="user_search" class="form-control" value="<%= (typeof queryParams !== 'undefined') ? queryParams.user_search : '' %>">
+            </div>
+            <div class="col-md-3">
+                <label for="book_search" class="form-label">Libro (Título o ISBN):</label>
+                <input type="text" name="book_search" id="book_search" class="form-control" value="<%= (typeof queryParams !== 'undefined') ? queryParams.book_search : '' %>">
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-info w-100">Filtrar</button>                <% if (Object.keys(queryParams || {}).length > 0 && (queryParams.status_filter || queryParams.user_search || queryParams.book_search)) { %>
+                    <a href="/loans" class="btn btn-outline-secondary w-100 mt-2">Limpiar Filtros</a>
+                <% } %>
+            </div>
+        </div>
+    </form>
+
+    <% if (loans && loans.length > 0) { %>
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Libro</th>
+                        <th>Usuario</th>
+                        <th>Fecha Préstamo</th>
+                        <th>Fecha Devolución Esperada</th>
+                        <th>Fecha Devolución Real</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% loans.forEach(loan => { %>                        <tr>
+                            <td><%= loan.id_loan %></td>
+                            <td><%= loan.book_title %></td>
+                            <td><%= loan.username || loan.user_username || "Usuario desconocido" %></td>
+                            <td><%= new Date(loan.loan_date).toLocaleDateString('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit' }) %></td>
+                            <td><%= new Date(loan.due_date).toLocaleDateString('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit' }) %></td>
+                            <td><%= loan.return_date ? new Date(loan.return_date).toLocaleDateString('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit' }) : '-' %></td>                            <td>
+                                <span class="badge 
+                                    <%= loan.status === 'solicitado' ? 'bg-info' : '' %> 
+                                    <%= loan.status === 'aprobado' ? 'bg-warning text-dark' : '' %> 
+                                    <%= loan.status === 'devuelto' ? 'bg-success' : '' %> 
+                                    <%= loan.status === 'vencido' ? 'bg-danger' : '' %>
+                                    <%= loan.status === 'rechazado' ? 'bg-secondary' : '' %>">
+                                    <%= loan.status %>
+                                </span>
+                            </td>
+                            <td>
+                                <% if (loan.status === 'aprobado' || loan.status === 'vencido') { %>
+                                    <form action="/loans/<%= loan.id_loan %>/return" method="POST" class="d-inline" onsubmit="return confirm('¿Está seguro de marcar este préstamo como devuelto?');">
+                                        <button type="submit" class="btn btn-sm btn-success">Marcar Devuelto</button>
+                                    </form>
+                                <% } else { %>
+                                    -
+                                <% } %>
+                            </td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
+
+        <%- include('../partials/pagination', { currentPage: currentPage, totalPages: totalPages, baseUrl: '/loans', queryParams: queryParams }) %>
+
+    <% } else { %>
+        <div class="alert alert-info" role="alert">
+            No hay préstamos registrados que coincidan con los filtros aplicados.
+        </div>
+    <% } %>
+</div>

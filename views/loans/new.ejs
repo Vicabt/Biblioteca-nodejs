@@ -1,0 +1,91 @@
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <h1 class="mb-4">Registrar Nuevo Préstamo</h1>
+
+            <% if (messages.error && messages.error.length > 0) { %>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <%= messages.error %>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            <% } %>
+            <% if (messages.success && messages.success.length > 0) { %>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <%= messages.success %>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            <% } %>
+
+            <form action="/loans" method="POST">
+                <div class="mb-3">
+                    <label for="id_book" class="form-label">Libro:</label>
+                    <select class="form-select <%= (typeof validationErrors !== 'undefined' && validationErrors.id_book) ? 'is-invalid' : '' %>" id="id_book" name="id_book" required>
+                        <option value="">Seleccione un libro</option>
+                        <% books.forEach(book => { %>
+                            <option value="<%= book.id_book %>" <%= (typeof formData !== 'undefined' && formData.id_book == book.id_book) ? 'selected' : '' %>>
+                                <%= book.title %> (Stock: <%= book.stock %>)
+                            </option>
+                        <% }); %>
+                    </select>
+                    <% if (typeof validationErrors !== 'undefined' && validationErrors.id_book) { %>
+                        <div class="invalid-feedback"><%= validationErrors.id_book.msg %></div>
+                    <% } %>
+                </div>
+
+                <div class="mb-3">
+                    <label for="id_user" class="form-label">Usuario:</label>
+                    <select class="form-select <%= (typeof validationErrors !== 'undefined' && validationErrors.id_user) ? 'is-invalid' : '' %>" id="id_user" name="id_user" required>
+                        <option value="">Seleccione un usuario</option>
+                        <% users.forEach(user => { %>
+                            <option value="<%= user.id_user %>" <%= (typeof formData !== 'undefined' && formData.id_user == user.id_user) ? 'selected' : '' %>>
+                                <%= user.username %> (<%= user.email %>)
+                            </option>
+                        <% }); %>
+                    </select>
+                    <% if (typeof validationErrors !== 'undefined' && validationErrors.id_user) { %>
+                        <div class="invalid-feedback"><%= validationErrors.id_user.msg %></div>
+                    <% } %>
+                </div>
+
+                <div class="mb-3">
+                    <label for="due_date_str" class="form-label">Fecha de Devolución Esperada:</label>
+                    <input type="date" class="form-control <%= (typeof validationErrors !== 'undefined' && validationErrors.due_date_str) ? 'is-invalid' : '' %>" id="due_date_str" name="due_date_str" 
+                           value="<%= (typeof formData !== 'undefined' && formData.due_date_str) ? formData.due_date_str : '' %>" required>
+                    <% if (typeof validationErrors !== 'undefined' && validationErrors.due_date_str) { %>
+                        <div class="invalid-feedback"><%= validationErrors.due_date_str.msg %></div>
+                    <% } %>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Registrar Préstamo</button>
+                <a href="/loans" class="btn btn-secondary">Cancelar</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Script para establecer la fecha mínima en el input de fecha de devolución
+    document.addEventListener('DOMContentLoaded', function() {
+        const dueDateInput = document.getElementById('due_date_str');
+        if (dueDateInput) {
+            const today = new Date();
+            const tomorrow = new Date(today);
+            tomorrow.setDate(today.getDate() + 1);
+            const yyyy = tomorrow.getFullYear();
+            const mm = String(tomorrow.getMonth() + 1).padStart(2, '0'); // Enero es 0
+            const dd = String(tomorrow.getDate()).padStart(2, '0');
+            dueDateInput.min = `${yyyy}-${mm}-${dd}`;
+
+            // Si no hay un valor preestablecido (ej. por error de validación), se establece mañana por defecto
+            if (!dueDateInput.value) {
+                 // Opcional: establecer un valor por defecto, ej. 7 días a partir de hoy
+                // const defaultDueDate = new Date(today);
+                // defaultDueDate.setDate(today.getDate() + 7);
+                // const defaultYyyy = defaultDueDate.getFullYear();
+                // const defaultMm = String(defaultDueDate.getMonth() + 1).padStart(2, '0');
+                // const defaultDd = String(defaultDueDate.getDate()).padStart(2, '0');
+                // dueDateInput.value = `${defaultYyyy}-${defaultMm}-${defaultDd}`;
+            }
+        }
+    });
+</script>

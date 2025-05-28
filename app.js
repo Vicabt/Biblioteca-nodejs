@@ -13,6 +13,7 @@ const publishersRouter = require('./routes/publishers');
 const categoriesRouter = require('./routes/categories');
 const authRouter = require('./routes/auth');
 const adminRouter = require('./routes/admin');
+const loansRouter = require('./routes/loans');
 
 const app = express();
 
@@ -21,7 +22,10 @@ app.use(session({
     secret: 'tu_clave_secreta_aqui',
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: process.env.NODE_ENV === 'production' }
+    cookie: { 
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 3600000 // 1 hora
+    }
 }));
 
 // Configuración de flash messages
@@ -46,6 +50,13 @@ app.use((req, res, next) => {
     res.locals.req = {
         originalUrl: req.originalUrl
     };
+    
+    // Debug de sesión
+    if (req.path.includes('/loans')) {
+        console.log('Sesión en ruta de préstamos:', req.path);
+        console.log('Usuario en sesión:', req.session.user ? `ID: ${req.session.user.id_user}, Rol: ${req.session.user.role}` : 'No autenticado');
+    }
+    
     next();
 });
 
@@ -61,6 +72,7 @@ app.use('/publishers', publishersRouter);
 app.use('/categories', categoriesRouter);
 app.use('/auth', authRouter);
 app.use('/admin', adminRouter);
+app.use('/loans', loansRouter); // Asegurar que esta línea esté presente y correcta
 
 // Manejador de errores 404
 app.use(function(req, res, next) {

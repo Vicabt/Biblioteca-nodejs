@@ -1,12 +1,42 @@
-# Aplicación CRUD (Node.js + Express + EJS + MySQL)
+# Biblioteca CRUD - Sistema de Gestión de Biblioteca
+
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+![Express.js](https://img.shields.io/badge/Express.js-404D59?style=for-the-badge&logo=express&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
+![Bootstrap](https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white)
 
 ## Descripción
 
-Esta aplicación es un CRUD (Create, Read, Update, Delete) para gestionar autores, categorías y editoriales (publishers) de una biblioteca. Está desarrollada con Node.js, Express, EJS (motor de plantillas) y MySQL. La interfaz de usuario se construye con Bootstrap y Font Awesome, y se implementa un sistema de autenticación (login) y autorización (roles) para proteger las rutas de administración.
+Sistema completo de gestión de biblioteca desarrollado con **Node.js**, **Express**, **EJS** y **MySQL**. Permite administrar libros, autores, categorías, editoriales, préstamos y usuarios a través de una interfaz web moderna, intuitiva y responsive.
+
+### Características Principales
+
+- ✅ **Sistema de autenticación y autorización** basado en roles (Admin, Bibliotecario, Usuario)
+- ✅ **Gestión completa de usuarios** con perfiles personalizados
+- ✅ **CRUD completo** para libros, autores, categorías y editoriales
+- ✅ **Sistema de préstamos** con notificaciones
+- ✅ **Interfaz responsive** con Bootstrap 5
+- ✅ **Paginación inteligente** para todas las listas
+- ✅ **Flash messages** para feedback al usuario
+- ✅ **Panel de administración** integrado
+- ✅ **Seguridad** con bcrypt para contraseñas
 
 ## Estructura de la Base de Datos
 
-### Tabla `authors`
+### Tabla `users` (Usuarios del Sistema)
+
+| Campo      | Tipo de dato | Descripción                        |
+|------------|--------------|------------------------------------|
+| id_user    | INT (PK)     | Identificador único del usuario (autoincremental) |
+| username   | VARCHAR(50)  | Nombre de usuario único            |
+| email      | VARCHAR(100) | Correo electrónico único           |
+| password   | VARCHAR(255) | Contraseña encriptada (bcrypt)     |
+| role       | ENUM         | Rol: 'admin', 'librarian', 'user'  |
+| status     | ENUM         | Estado: 'active', 'inactive'       |
+| created_at | TIMESTAMP    | Fecha de creación                  |
+| updated_at | TIMESTAMP    | Fecha de última actualización      |
+
+### Tabla `authors` (Autores)
 
 | Campo      | Tipo de dato | Descripción                        |
 |------------|--------------|------------------------------------|
@@ -14,7 +44,7 @@ Esta aplicación es un CRUD (Create, Read, Update, Delete) para gestionar autore
 | name       | VARCHAR      | Nombre del autor                   |
 | state      | TINYINT/INT  | Estado (1 = Activo, 0 = Inactivo)  |
 
-### Tabla `categories`
+### Tabla `categories` (Categorías)
 
 | Campo         | Tipo de dato | Descripción                        |
 |---------------|--------------|------------------------------------|
@@ -22,7 +52,7 @@ Esta aplicación es un CRUD (Create, Read, Update, Delete) para gestionar autore
 | name          | VARCHAR      | Nombre de la categoría             |
 | state         | TINYINT/INT  | Estado (1 = Activo, 0 = Inactivo)  |
 
-### Tabla `publishers`
+### Tabla `publishers` (Editoriales)
 
 | Campo           | Tipo de dato | Descripción                        |
 |-----------------|--------------|------------------------------------|
@@ -30,98 +60,410 @@ Esta aplicación es un CRUD (Create, Read, Update, Delete) para gestionar autore
 | name            | VARCHAR      | Nombre de la editorial             |
 | state           | TINYINT/INT  | Estado (1 = Activo, 0 = Inactivo)  |
 
+### Tabla `books` (Libros)
+
+| Campo           | Tipo de dato | Descripción                        |
+|-----------------|--------------|------------------------------------|
+| id_book         | INT (PK)     | Identificador único del libro (autoincremental) |
+| title           | VARCHAR      | Título del libro                   |
+| id_author       | INT (FK)     | Referencia al autor                |
+| id_category     | INT (FK)     | Referencia a la categoría          |
+| id_publisher    | INT (FK)     | Referencia a la editorial          |
+| isbn            | VARCHAR      | Código ISBN del libro              |
+| publication_date| DATE         | Fecha de publicación               |
+| stock           | INT          | Cantidad en inventario             |
+| state           | TINYINT/INT  | Estado (1 = Activo, 0 = Inactivo)  |
+
+### Tabla `loans` (Préstamos)
+
+| Campo      | Tipo de dato | Descripción                        |
+|------------|--------------|------------------------------------|
+| id_loan    | INT (PK)     | Identificador único del préstamo (autoincremental) |
+| id_book    | INT (FK)     | Referencia al libro                |
+| id_user    | INT (FK)     | Referencia al usuario              |
+| loan_date  | TIMESTAMP    | Fecha del préstamo                 |
+| due_date   | TIMESTAMP    | Fecha de vencimiento               |
+| return_date| TIMESTAMP    | Fecha de devolución (nullable)     |
+| status     | ENUM         | Estado del préstamo                |
+| created_at | TIMESTAMP    | Fecha de creación                  |
+| updated_at | TIMESTAMP    | Fecha de última actualización      |
+
 ## Estructura del Proyecto
 
-- **nodejs-crud/**: Carpeta raíz del proyecto.
-  - **controllers/**: Controladores (authorController, categoryController, publisherController, authController, etc.) que manejan la lógica de negocio.
-  - **routes/**: Rutas (authors, categories, publishers, auth, etc.) que definen los endpoints de la API.
-  - **views/**: Plantillas EJS (por ejemplo, `authors/index.ejs`, `categories/index.ejs`, `publishers/index.ejs`, `login.ejs`, etc.) que renderizan la interfaz de usuario.
-  - **config/**: Configuración (por ejemplo, conexión a la base de datos).
-  - **public/**: Archivos estáticos (CSS, JS, imágenes, etc.).
-  - **app.js**: Archivo principal que inicia el servidor y monta los middlewares (express, sesiones, autenticación, etc.).
-  - **package.json**: Dependencias y scripts (por ejemplo, `npm start`).
-  - **.env**: Variables de entorno (por ejemplo, credenciales de la base de datos, puerto, etc.).
+```
+nodejs-crud/
+├── 📁 bin/
+│   └── www                          # Punto de entrada del servidor
+├── 📁 controllers/                  # Lógica de negocio
+│   ├── authController.js           # Autenticación y autorización
+│   ├── authorController.js         # Gestión de autores
+│   ├── bookController.js           # Gestión de libros
+│   ├── categoryController.js       # Gestión de categorías
+│   ├── profileController.js        # Gestión de perfiles de usuario
+│   ├── publisherController.js      # Gestión de editoriales
+│   └── userController.js           # Gestión de usuarios (admin)
+├── 📁 lib/
+│   └── db.js                       # Configuración de base de datos
+├── 📁 middleware/
+│   ├── auth.js                     # Middleware de autenticación
+│   ├── loanAuth.js                 # Middleware de préstamos
+│   └── notifications.js           # Middleware de notificaciones
+├── 📁 models/
+│   └── userModel.js                # Modelo de datos de usuario
+├── 📁 public/                      # Archivos estáticos
+│   ├── 📁 images/
+│   ├── 📁 javascripts/
+│   └── 📁 stylesheets/
+├── 📁 routes/                      # Definición de rutas
+│   ├── admin.js                    # Rutas de administración
+│   ├── auth.js                     # Rutas de autenticación
+│   ├── authors.js                  # Rutas de autores
+│   ├── books.js                    # Rutas de libros
+│   ├── categories.js               # Rutas de categorías
+│   ├── index.js                    # Rutas principales y perfil
+│   └── publishers.js               # Rutas de editoriales
+├── 📁 views/                       # Plantillas EJS
+│   ├── 📁 admin/users/             # Administración de usuarios
+│   ├── 📁 auth/                    # Páginas de autenticación
+│   ├── 📁 authors/                 # Páginas de autores
+│   ├── 📁 books/                   # Páginas de libros
+│   ├── 📁 categories/              # Páginas de categorías
+│   ├── 📁 layouts/                 # Plantillas base
+│   ├── 📁 partials/                # Componentes reutilizables
+│   ├── 📁 profile/                 # Páginas de perfil
+│   └── 📁 publishers/              # Páginas de editoriales
+├── app.js                          # Configuración principal de Express
+├── package.json                    # Dependencias y scripts
+├── database.sql                    # Esquema de base de datos
+├── create-default-users.js         # Script para crear usuarios por defecto
+├── check-database.js               # Script de verificación de BD
+└── README.md                       # Documentación del proyecto
+```
 
-## Rutas (Endpoints)
+## Roles y Permisos
 
-### Autores (`/authors`)
+### 👑 Administrador (admin)
+- **Acceso completo** al sistema
+- Gestión de usuarios (crear, editar, activar/desactivar)
+- Gestión de libros, autores, categorías y editoriales
+- Configuración del sistema
+- Ver estadísticas y reportes
 
-- **GET /authors**: Muestra la lista de autores (vista: `views/authors/index.ejs`).
-- **GET /authors/new**: Muestra el formulario para crear un nuevo autor (vista: `views/authors/new.ejs`).
-- **POST /authors**: Crea un nuevo autor (controlador: `AuthorController.createAuthor`).
-- **GET /authors/:id/edit**: Muestra el formulario para editar un autor (vista: `views/authors/edit.ejs`).
-- **POST /authors/:id**: Actualiza un autor (controlador: `AuthorController.updateAuthor`).
-- **POST /authors/:id/delete**: Elimina (soft-delete) un autor (controlador: `AuthorController.deleteAuthor`).
-- **POST /authors/toggle-state/:id_author**: Cambia el estado (activo/inactivo) de un autor (controlador: `AuthorController.toggleState`).
+### 👨‍💼 Bibliotecario (librarian)
+- Gestión de libros, autores, categorías y editoriales
+- Gestión de préstamos y devoluciones
+- Ver usuarios (sin modificar)
+- Reportes básicos
 
-### Categorías (`/categories`)
+### 👤 Usuario (user)
+- Ver catálogo de libros
+- Realizar solicitudes de préstamo
+- Gestionar su perfil personal
+- Ver historial de préstamos
 
-- **GET /categories**: Muestra la lista de categorías (vista: `views/categories/index.ejs`).
-- **GET /categories/new**: Muestra el formulario para crear una nueva categoría (vista: `views/categories/new.ejs`).
-- **POST /categories**: Crea una nueva categoría (controlador: `CategoryController.createCategory`).
-- **GET /categories/:id/edit**: Muestra el formulario para editar una categoría (vista: `views/categories/edit.ejs`).
-- **POST /categories/:id**: Actualiza una categoría (controlador: `CategoryController.updateCategory`).
-- **POST /categories/:id/delete**: Elimina (soft-delete) una categoría (controlador: `CategoryController.deleteCategory`).
-- **POST /categories/toggle-state/:id_category**: Cambia el estado (activo/inactivo) de una categoría (controlador: `CategoryController.toggleState`).
+## API Endpoints
 
-### Editoriales (`/publishers`)
+### 🔐 Autenticación (`/auth`)
+- **GET** `/auth/login` - Mostrar formulario de login
+- **POST** `/auth/login` - Procesar login
+- **GET** `/auth/logout` - Cerrar sesión
 
-- **GET /publishers**: Muestra la lista de editoriales (vista: `views/publishers/index.ejs`).
-- **GET /publishers/new**: Muestra el formulario para crear una nueva editorial (vista: `views/publishers/new.ejs`).
-- **POST /publishers**: Crea una nueva editorial (controlador: `PublisherController.createPublisher`).
-- **GET /publishers/:id/edit**: Muestra el formulario para editar una editorial (vista: `views/publishers/edit.ejs`).
-- **POST /publishers/:id**: Actualiza una editorial (controlador: `PublisherController.updatePublisher`).
-- **POST /publishers/:id/delete**: Elimina (soft-delete) una editorial (controlador: `PublisherController.deletePublisher`).
-- **POST /publishers/toggle-state/:id_publisher**: Cambia el estado (activo/inactivo) de una editorial (controlador: `PublisherController.toggleState`).
+### 👤 Perfil de Usuario (`/profile`)
+- **GET** `/profile` - Ver perfil personal
+- **GET** `/profile/edit` - Mostrar formulario de edición
+- **POST** `/profile/edit` - Actualizar perfil
+- **GET** `/profile/change-password` - Mostrar formulario de cambio de contraseña
+- **POST** `/profile/change-password` - Cambiar contraseña
 
-### Autenticación (`/auth`)
+### 👥 Administración de Usuarios (`/admin/users`) *Solo Admin*
+- **GET** `/admin/users` - Listar todos los usuarios
+- **GET** `/admin/users/new` - Mostrar formulario de creación
+- **POST** `/admin/users` - Crear nuevo usuario
+- **GET** `/admin/users/:id/edit` - Mostrar formulario de edición
+- **POST** `/admin/users/:id` - Actualizar usuario
+- **POST** `/admin/users/:id/toggle-status` - Cambiar estado (activo/inactivo)
 
-- **GET /auth/login**: Muestra la página de login (vista: `views/auth/login.ejs`).
-- **POST /auth/login**: Autentica al usuario (controlador: `AuthController.login`).
-- **GET /auth/logout**: Cierra la sesión (controlador: `AuthController.logout`).
+### 📚 Autores (`/authors`)
+- **GET** `/authors` - Listar autores con paginación
+- **GET** `/authors/new` - Mostrar formulario de creación
+- **POST** `/authors` - Crear nuevo autor
+- **GET** `/authors/:id/edit` - Mostrar formulario de edición
+- **POST** `/authors/:id` - Actualizar autor
+- **POST** `/authors/:id/delete` - Eliminar autor (soft delete)
+- **POST** `/authors/toggle-state/:id` - Cambiar estado
 
-## Controladores
+### 📖 Libros (`/books`)
+- **GET** `/books` - Listar libros con paginación y filtros
+- **GET** `/books/new` - Mostrar formulario de creación
+- **POST** `/books` - Crear nuevo libro
+- **GET** `/books/:id/edit` - Mostrar formulario de edición
+- **POST** `/books/:id` - Actualizar libro
+- **POST** `/books/:id/delete` - Eliminar libro (soft delete)
+- **POST** `/books/toggle-state/:id` - Cambiar estado
 
-- **AuthorController**: Gestiona la lógica de autores (crear, listar, editar, eliminar, toggle-state).
-- **CategoryController**: Gestiona la lógica de categorías (crear, listar, editar, eliminar, toggle-state).
-- **PublisherController**: Gestiona la lógica de editoriales (crear, listar, editar, eliminar, toggle-state).
-- **AuthController**: Gestiona la autenticación (login, logout).
+### 🏷️ Categorías (`/categories`)
+- **GET** `/categories` - Listar categorías con paginación
+- **GET** `/categories/new` - Mostrar formulario de creación
+- **POST** `/categories` - Crear nueva categoría
+- **GET** `/categories/:id/edit` - Mostrar formulario de edición
+- **POST** `/categories/:id` - Actualizar categoría
+- **POST** `/categories/:id/delete` - Eliminar categoría (soft delete)
+- **POST** `/categories/toggle-state/:id` - Cambiar estado
 
-## Vistas (EJS)
+### 🏢 Editoriales (`/publishers`)
+- **GET** `/publishers` - Listar editoriales con paginación
+- **GET** `/publishers/new` - Mostrar formulario de creación
+- **POST** `/publishers` - Crear nueva editorial
+- **GET** `/publishers/:id/edit` - Mostrar formulario de edición
+- **POST** `/publishers/:id` - Actualizar editorial
+- **POST** `/publishers/:id/delete` - Eliminar editorial (soft delete)
+- **POST** `/publishers/toggle-state/:id` - Cambiar estado
 
-- **views/authors/index.ejs**: Lista de autores (con botones para editar, eliminar y cambiar estado).
-- **views/authors/new.ejs**: Formulario para crear un nuevo autor.
-- **views/authors/edit.ejs**: Formulario para editar un autor.
-- **views/categories/index.ejs**: Lista de categorías (con botones para editar, eliminar y cambiar estado).
-- **views/categories/new.ejs**: Formulario para crear una nueva categoría.
-- **views/categories/edit.ejs**: Formulario para editar una categoría.
-- **views/publishers/index.ejs**: Lista de editoriales (con botones para editar, eliminar y cambiar estado).
-- **views/publishers/new.ejs**: Formulario para crear una nueva editorial.
-- **views/publishers/edit.ejs**: Formulario para editar una editorial.
-- **views/auth/login.ejs**: Página de login.
-- **views/layouts/main.ejs**: Plantilla base (header, footer, barra de navegación, etc.).
+## Funcionalidades Destacadas
 
-## Ejecución de la Aplicación
+### 🔒 Sistema de Seguridad
+- **Autenticación**: Login seguro con sesiones
+- **Autorización**: Control de acceso basado en roles
+- **Encriptación**: Contraseñas protegidas con bcrypt
+- **Middleware**: Protección de rutas sensibles
 
-1. **Clonar el repositorio** (o descargar el código).
-2. **Instalar dependencias** (en la carpeta raíz del proyecto):
+### 🎨 Interfaz de Usuario
+- **Responsive**: Compatible con dispositivos móviles
+- **Bootstrap 5**: Diseño moderno y profesional
+- **Font Awesome**: Iconografía consistente
+- **Flash Messages**: Feedback inmediato al usuario
+- **Paginación**: Navegación eficiente en listas largas
+
+### 📊 Panel de Administración
+- **Gestión de Usuarios**: CRUD completo para usuarios
+- **Estadísticas**: Vista resumida del sistema
+- **Configuración**: Ajustes del sistema
+- **Monitoreo**: Estado de la aplicación
+
+### 🔔 Sistema de Notificaciones
+- **Alertas**: Mensajes de éxito, error e información
+- **Auto-dismiss**: Desaparición automática después de 5 segundos
+- **Persistencia**: Mantiene mensajes entre redirecciones
+
+## Instalación y Configuración
+
+### Prerrequisitos
+
+- **Node.js** v14 o superior
+- **MySQL** v5.7 o superior
+- **npm** (incluido con Node.js)
+
+### Pasos de Instalación
+
+1. **Clonar el repositorio**
+   ```bash
+   git clone <url-del-repositorio>
+   cd nodejs-crud
+   ```
+
+2. **Instalar dependencias**
    ```bash
    npm install
    ```
-3. **Configurar la base de datos** (crear un archivo `.env` con las credenciales de MySQL, puerto, etc.).
-4. **Iniciar el servidor**:
+
+3. **Configurar la base de datos**
+   - Crear una base de datos MySQL llamada `ejercicio_biblioteca_nodejs`
+   - Importar el esquema desde `database.sql`:
+   ```bash
+   mysql -u root -p ejercicio_biblioteca_nodejs < database.sql
+   ```
+
+4. **Configurar variables de entorno** (opcional)
+   - Crear archivo `.env` en la raíz del proyecto:
+   ```env
+   DB_HOST=localhost
+   DB_USER=root
+   DB_PASSWORD=tu_password
+   DB_NAME=ejercicio_biblioteca_nodejs
+   PORT=3001
+   SESSION_SECRET=tu_clave_secreta_aqui
+   ```
+
+5. **Crear usuarios por defecto**
+   ```bash
+   node create-default-users.js
+   ```
+
+6. **Iniciar la aplicación**
    ```bash
    npm start
    ```
-   (o bien, si se usa nodemon, ejecutar `nodemon app.js`).
-5. **Acceder a la aplicación** en el navegador (por ejemplo, `http://localhost:3001`).
+
+7. **Acceder a la aplicación**
+   - Abrir navegador en: `http://localhost:3001`
+
+### Verificación de la Instalación
+
+```bash
+# Verificar estructura de la base de datos
+node check-database.js
+
+# Verificar usuarios creados
+node check-users.js
+```
+
+## Usuarios por Defecto
+
+Al ejecutar `create-default-users.js`, se crean los siguientes usuarios:
+
+| Usuario    | Contraseña     | Rol          | Email                     |
+|------------|----------------|--------------|---------------------------|
+| admin      | admin123       | admin        | admin@biblioteca.com      |
+| librarian  | librarian123   | librarian    | librarian@biblioteca.com  |
+| usuario    | usuario123     | user         | usuario@biblioteca.com    |
 
 ## Tecnologías Utilizadas
 
-- **Backend**: Node.js, Express, MySQL (con el módulo `mysql2`).
-- **Frontend**: EJS (motor de plantillas), Bootstrap (CSS y JS), Font Awesome (iconos).
-- **Autenticación**: Sesiones (express-session), middleware de autenticación (`isAuthenticated`) y autorización (`hasRole`).
+### Backend
+- **Node.js** - Entorno de ejecución de JavaScript
+- **Express.js** - Framework web para Node.js
+- **MySQL2** - Driver para base de datos MySQL
+- **EJS** - Motor de plantillas
+- **bcryptjs** - Encriptación de contraseñas
+- **express-session** - Manejo de sesiones
+- **express-flash** - Mensajes flash
+- **express-ejs-layouts** - Sistema de layouts
+
+### Frontend
+- **Bootstrap 5** - Framework CSS
+- **Font Awesome** - Iconografía
+- **JavaScript** - Interactividad del lado del cliente
+
+### Dependencias
+
+```json
+{
+  "bcryptjs": "^3.0.2",
+  "cookie-parser": "~1.4.4",
+  "debug": "~2.6.9",
+  "ejs": "^3.1.10",
+  "express": "^4.21.2",
+  "express-ejs-layouts": "^2.5.1",
+  "express-flash": "^0.0.2",
+  "express-session": "^1.18.1",
+  "http-errors": "~1.6.3",
+  "method-override": "^3.0.0",
+  "morgan": "~1.9.1",
+  "mysql": "^2.18.1",
+  "mysql2": "^3.14.1"
+}
+```
+
+## Scripts Disponibles
+
+| Script | Comando | Descripción |
+|--------|---------|-------------|
+| start | `npm start` | Inicia el servidor en producción |
+| dev | `nodemon app.js` | Inicia el servidor en modo desarrollo |
+
+## Scripts de Utilidad
+
+| Script | Descripción |
+|--------|-------------|
+| `create-default-users.js` | Crea usuarios por defecto del sistema |
+| `check-database.js` | Verifica la estructura de la base de datos |
+| `check-users.js` | Verifica los usuarios existentes |
+| `reset-password.js` | Herramienta para resetear contraseñas |
+
+## Características Técnicas
+
+### Arquitectura
+- **Patrón MVC** (Model-View-Controller)
+- **Middleware personalizado** para autenticación y notificaciones
+- **Separación de responsabilidades** clara
+- **Reutilización de componentes** con partials
+
+### Seguridad
+- **Protección CSRF** implícita con formularios
+- **Validación de entrada** en servidor
+- **Sanitización** de datos de usuario
+- **Control de acceso** granular por roles
+
+### Performance
+- **Paginación** en todas las listas
+- **Consultas optimizadas** a base de datos
+- **Cache de sesiones** en memoria
+- **Archivos estáticos** servidos eficientemente
+
+## Desarrollo y Contribución
+
+### Estructura de Desarrollo
+
+```bash
+# Instalar dependencias de desarrollo
+npm install --save-dev nodemon
+
+# Ejecutar en modo desarrollo
+npx nodemon app.js
+```
+
+### Convenciones de Código
+- **Nomenclatura**: camelCase para variables y funciones
+- **Archivos**: kebab-case para nombres de archivo
+- **Comentarios**: Documentación en español
+- **Indentación**: 4 espacios
+
+### Testing
+```bash
+# Verificar funcionamiento
+node check-database.js
+node check-users.js
+```
+
+## Resolución de Problemas
+
+### Problemas Comunes
+
+1. **Error de conexión a MySQL**
+   - Verificar que MySQL esté ejecutándose
+   - Comprobar credenciales en `lib/db.js`
+   - Confirmar que la base de datos existe
+
+2. **Puerto ya en uso**
+   - Cambiar puerto en `bin/www`
+   - Verificar procesos que usen el puerto 3001
+
+3. **Usuarios no creados**
+   - Ejecutar `node create-default-users.js`
+   - Verificar con `node check-users.js`
+
+### Logs de Depuración
+El sistema incluye logs detallados para facilitar la depuración:
+- Conexiones a base de datos
+- Errores de autenticación
+- Operaciones CRUD
+- Estados de sesión
+
+## Roadmap y Futuras Mejoras
+
+### Funcionalidades Planeadas
+- 📅 **Sistema de reservas** de libros
+- 📊 **Dashboard** con estadísticas avanzadas
+- 📧 **Notificaciones por email**
+- 🔍 **Búsqueda avanzada** con filtros
+- 📱 **API REST** para aplicaciones móviles
+- 🌐 **Internacionalización** (i18n)
+
+### Mejoras Técnicas
+- **Tests unitarios** y de integración
+- **Docker** para contenedorización
+- **CI/CD** con GitHub Actions
+- **Documentación** de API con Swagger
+- **Monitoring** con herramientas especializadas
+
+## Licencia
+
+Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
+
+## Contacto y Soporte
+
+Para reportar bugs o solicitar nuevas funcionalidades, por favor crear un issue en el repositorio del proyecto.
 
 ---
 
-Este README resume la estructura, rutas, controladores, vistas y la forma de ejecutar la aplicación. Si necesitas más detalles o ejemplos de código, revisa los archivos correspondientes en el proyecto. 
+**¡Gracias por usar el Sistema de Gestión de Biblioteca!** 📚✨

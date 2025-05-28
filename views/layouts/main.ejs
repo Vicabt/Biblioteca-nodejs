@@ -142,6 +142,16 @@
         <li class="nav-item w-100">
           <a class="nav-link d-flex align-items-center" href="/books"><i class="fa fa-book me-2"></i>Libros</a>
         </li>
+        <% if (user && (user.role === 'admin' || user.role === 'librarian')) { %>
+        <li class="nav-item w-100">
+          <a class="nav-link d-flex align-items-center" href="/loans"><i class="fa fa-handshake me-2"></i>Gestión de Préstamos</a>
+        </li>
+        <% } %>
+        <% if (user) { %>
+        <li class="nav-item w-100">
+          <a class="nav-link d-flex align-items-center" href="/loans/my-loans"><i class="fa fa-list-alt me-2"></i>Mis Préstamos</a>
+        </li>
+        <% } %>
         <li class="nav-item w-100">
           <a class="nav-link d-flex align-items-center" href="/books/restore"><i class="fa fa-trash-restore me-2"></i>Restaurar Libros</a>
         </li>
@@ -159,9 +169,23 @@
     <div class="col p-0 d-flex flex-column" style="min-height:100vh;">
       <!-- Header -->
       <header class="header-custom position-relative py-3 px-4">
-        <span class="display-5 fw-bold w-100"><%= typeof pageTitle !== 'undefined' ? pageTitle : 'Panel principal' %></span>
-        <div class="user-info d-flex align-items-center">
+        <span class="display-5 fw-bold w-100"><%= typeof pageTitle !== 'undefined' ? pageTitle : 'Panel principal' %></span>          <div class="user-info d-flex align-items-center">
           <% if (typeof user !== 'undefined' && user) { %>
+            <!-- Icono de notificaciones -->
+            <% if (typeof hasNotifications !== 'undefined' && hasNotifications) { %>
+              <a href="/profile" class="me-3 position-relative text-decoration-none" title="Ver notificaciones">
+                <i class="fas fa-bell fs-4 text-warning <%= notificationCount > 0 ? 'pulse' : '' %>"></i>
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                  <%= notificationCount %>
+                  <span class="visually-hidden">notificaciones no leídas</span>
+                </span>
+              </a>
+            <% } else { %>
+              <a href="/profile" class="me-3 text-decoration-none" title="Sin notificaciones">
+                <i class="fas fa-bell fs-4 text-secondary"></i>
+              </a>
+            <% } %>
+            
             <!-- Menú desplegable del usuario -->
             <div class="dropdown">
               <a href="#" class="d-flex align-items-center text-decoration-none user-dropdown-toggle" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
@@ -185,7 +209,7 @@
                   <p class="mb-0 fw-bold"><%= typeof userName !== 'undefined' ? userName : user.username %></p>
                   <p class="text-muted small mb-0"><%= user.email || '' %></p>
                   <div class="mt-2">
-                    <span class="badge bg-<%= user.role === 'admin' ? 'danger' : user.role === 'librarian' ? 'warning' : 'info' %>">
+                    <span class="badge bg-<%= user.role === 'admin' ? 'danger' : user.role === 'librarian' ? 'warning text-dark' : 'info' %>">
                       <%= user.role === 'admin' ? 'Administrador' : user.role === 'librarian' ? 'Bibliotecario' : 'Usuario' %>
                     </span>
                   </div>

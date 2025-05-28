@@ -56,28 +56,27 @@
                 <div class="collapse show" id="notificationsCollapse">
                     <div class="card-body">
                         <div class="list-group">
-                            <!-- Ejemplo de notificación -->
-                            <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                                <div>
-                                    <i class="fas fa-book text-warning me-2"></i>
-                                    <strong>Libro vencido:</strong> Tiene un préstamo pendiente de "Cien años de soledad".
-                                    <small class="text-muted d-block mt-1">Venció hace 3 días</small>
+                            <% if (notifications && notifications.length > 0) { %>
+                                <% notifications.forEach(function(notification) { %>
+                                    <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <i class="<%= notification.icon %> me-2"></i>
+                                            <strong><%= notification.title %></strong> <%= notification.message %>
+                                            <small class="text-muted d-block mt-1"><%= notification.detail %></small>
+                                        </div>
+                                        <div>
+                                            <a href="<%= notification.actionUrl %>" class="btn btn-sm <%= notification.actionClass %>">
+                                                <%= notification.action %>
+                                            </a>
+                                        </div>
+                                    </div>
+                                <% }); %>
+                            <% } else { %>
+                                <div class="list-group-item text-center">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    No tienes notificaciones pendientes
                                 </div>
-                                <div>
-                                    <a href="#" class="btn btn-sm btn-outline-primary">Renovar</a>
-                                </div>
-                            </div>
-                            <!-- Otra notificación -->
-                            <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                                <div>
-                                    <i class="fas fa-info-circle text-info me-2"></i>
-                                    <strong>Reserva disponible:</strong> El libro "El principito" ya está disponible.
-                                    <small class="text-muted d-block mt-1">Disponible hasta: 30/05/2025</small>
-                                </div>
-                                <div>
-                                    <a href="#" class="btn btn-sm btn-outline-success">Retirar</a>
-                                </div>
-                            </div>
+                            <% } %>
                         </div>
                     </div>
                 </div>
