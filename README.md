@@ -1,25 +1,30 @@
-# Biblioteca CRUD - Sistema de Gestión de Biblioteca
+# 📚 Biblioteca CRUD - Sistema de Gestión de Biblioteca
 
 ![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
 ![Express.js](https://img.shields.io/badge/Express.js-404D59?style=for-the-badge&logo=express&logoColor=white)
 ![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
 ![Bootstrap](https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white)
+![EJS](https://img.shields.io/badge/EJS-B4CA65?style=for-the-badge&logo=ejs&logoColor=black)
 
-## Descripción
+## 📖 Descripción
 
-Sistema completo de gestión de biblioteca desarrollado con **Node.js**, **Express**, **EJS** y **MySQL**. Permite administrar libros, autores, categorías, editoriales, préstamos y usuarios a través de una interfaz web moderna, intuitiva y responsive.
+Sistema completo de gestión de biblioteca desarrollado con **Node.js**, **Express**, **EJS** y **MySQL**. Permite administrar libros, autores, categorías, editoriales, préstamos y usuarios a través de una interfaz web moderna, intuitiva y totalmente responsive.
 
-### Características Principales
+### 🌟 Características Principales
 
 - ✅ **Sistema de autenticación y autorización** basado en roles (Admin, Bibliotecario, Usuario)
-- ✅ **Gestión completa de usuarios** con perfiles personalizados
+- ✅ **Gestión completa de usuarios** con perfiles personalizados y cambio de contraseña
 - ✅ **CRUD completo** para libros, autores, categorías y editoriales
-- ✅ **Sistema de préstamos** con notificaciones
-- ✅ **Interfaz responsive** con Bootstrap 5
-- ✅ **Paginación inteligente** para todas las listas
-- ✅ **Flash messages** para feedback al usuario
-- ✅ **Panel de administración** integrado
-- ✅ **Seguridad** con bcrypt para contraseñas
+- ✅ **Sistema de préstamos completo** con gestión de estados y fechas
+- ✅ **Sistema de notificaciones inteligente** para préstamos vencidos y próximos a vencer
+- ✅ **Renovación de préstamos** desde las notificaciones
+- ✅ **Interfaz responsive** con Bootstrap 5 y diseño moderno
+- ✅ **Paginación inteligente** para todas las listas con filtros avanzados
+- ✅ **Flash messages** para feedback inmediato al usuario
+- ✅ **Panel de administración** integrado con estadísticas
+- ✅ **Seguridad robusta** con bcrypt para contraseñas y middleware de autorización
+- ✅ **Restauración de libros eliminados** (soft delete)
+- ✅ **Indicadores visuales** de estado y notificaciones
 
 ## Estructura de la Base de Datos
 
@@ -84,9 +89,16 @@ Sistema completo de gestión de biblioteca desarrollado con **Node.js**, **Expre
 | loan_date  | TIMESTAMP    | Fecha del préstamo                 |
 | due_date   | TIMESTAMP    | Fecha de vencimiento               |
 | return_date| TIMESTAMP    | Fecha de devolución (nullable)     |
-| status     | ENUM         | Estado del préstamo                |
+| status     | VARCHAR(20)  | Estado: 'solicitado', 'aprobado', 'rechazado', 'devuelto', 'vencido' |
 | created_at | TIMESTAMP    | Fecha de creación                  |
 | updated_at | TIMESTAMP    | Fecha de última actualización      |
+
+**Estados de Préstamos:**
+- **solicitado**: Préstamo solicitado pero no aprobado
+- **aprobado**: Préstamo aprobado y libro entregado
+- **rechazado**: Solicitud de préstamo rechazada
+- **devuelto**: Libro devuelto satisfactoriamente
+- **vencido**: Préstamo vencido sin devolución
 
 ## Estructura del Proyecto
 
@@ -99,21 +111,25 @@ nodejs-crud/
 │   ├── authorController.js         # Gestión de autores
 │   ├── bookController.js           # Gestión de libros
 │   ├── categoryController.js       # Gestión de categorías
+│   ├── loanController.js           # Gestión de préstamos y renovaciones
 │   ├── profileController.js        # Gestión de perfiles de usuario
 │   ├── publisherController.js      # Gestión de editoriales
 │   └── userController.js           # Gestión de usuarios (admin)
 ├── 📁 lib/
-│   └── db.js                       # Configuración de base de datos
+│   ├── db.js                       # Configuración de base de datos
+│   └── utils.js                    # Funciones utilitarias
 ├── 📁 middleware/
 │   ├── auth.js                     # Middleware de autenticación
-│   ├── loanAuth.js                 # Middleware de préstamos
-│   └── notifications.js           # Middleware de notificaciones
+│   ├── loanAuth.js                 # Middleware específico de préstamos
+│   └── notifications.js           # Middleware de notificaciones dinámicas
 ├── 📁 models/
 │   └── userModel.js                # Modelo de datos de usuario
 ├── 📁 public/                      # Archivos estáticos
 │   ├── 📁 images/
+│   │   └── biblioteca.jpg          # Logo de la biblioteca
 │   ├── 📁 javascripts/
 │   └── 📁 stylesheets/
+│       └── style.css               # Estilos personalizados
 ├── 📁 routes/                      # Definición de rutas
 │   ├── admin.js                    # Rutas de administración
 │   ├── auth.js                     # Rutas de autenticación
@@ -121,22 +137,40 @@ nodejs-crud/
 │   ├── books.js                    # Rutas de libros
 │   ├── categories.js               # Rutas de categorías
 │   ├── index.js                    # Rutas principales y perfil
-│   └── publishers.js               # Rutas de editoriales
+│   ├── loans.js                    # Rutas de préstamos
+│   ├── publishers.js               # Rutas de editoriales
+│   └── users.js                    # Rutas de usuarios
 ├── 📁 views/                       # Plantillas EJS
 │   ├── 📁 admin/users/             # Administración de usuarios
 │   ├── 📁 auth/                    # Páginas de autenticación
 │   ├── 📁 authors/                 # Páginas de autores
 │   ├── 📁 books/                   # Páginas de libros
+│   │   └── restore.ejs             # Restauración de libros eliminados
 │   ├── 📁 categories/              # Páginas de categorías
 │   ├── 📁 layouts/                 # Plantillas base
+│   │   └── main.ejs                # Layout principal con notificaciones
+│   ├── 📁 loans/                   # Páginas de préstamos
+│   │   ├── index.ejs               # Gestión de préstamos (admin/librarian)
+│   │   └── new.ejs                 # Formulario de nuevo préstamo
 │   ├── 📁 partials/                # Componentes reutilizables
 │   ├── 📁 profile/                 # Páginas de perfil
+│   │   ├── index.ejs               # Perfil con notificaciones dinámicas
+│   │   ├── my_loans.ejs            # Mis préstamos
+│   │   ├── edit.ejs                # Editar perfil
+│   │   └── change-password.ejs     # Cambiar contraseña
 │   └── 📁 publishers/              # Páginas de editoriales
+├── 📁 scripts/                     # Scripts de utilidad
+│   ├── create-default-users.js     # Crear usuarios por defecto
+│   ├── create-test-data.js         # Crear datos de prueba
+│   ├── create-test-loans.js        # Crear préstamos de prueba
+│   ├── setup-loans-table.js        # Configurar tabla de préstamos
+│   ├── check-database.js           # Verificar base de datos
+│   ├── check-users.js              # Verificar usuarios
+│   ├── create-user.js              # Crear usuario individual
+│   └── reset-password.js           # Resetear contraseña de usuario
 ├── app.js                          # Configuración principal de Express
 ├── package.json                    # Dependencias y scripts
 ├── database.sql                    # Esquema de base de datos
-├── create-default-users.js         # Script para crear usuarios por defecto
-├── check-database.js               # Script de verificación de BD
 └── README.md                       # Documentación del proyecto
 ```
 
@@ -151,13 +185,17 @@ nodejs-crud/
 
 ### 👨‍💼 Bibliotecario (librarian)
 - Gestión de libros, autores, categorías y editoriales
-- Gestión de préstamos y devoluciones
+- **Gestión completa de préstamos y devoluciones**
+- **Aprobar/rechazar solicitudes de préstamo**
+- **Marcar libros como devueltos**
 - Ver usuarios (sin modificar)
 - Reportes básicos
 
 ### 👤 Usuario (user)
 - Ver catálogo de libros
-- Realizar solicitudes de préstamo
+- **Realizar solicitudes de préstamo**
+- **Renovar préstamos activos**
+- **Ver notificaciones de vencimientos**
 - Gestionar su perfil personal
 - Ver historial de préstamos
 
@@ -219,6 +257,16 @@ nodejs-crud/
 - **POST** `/publishers/:id/delete` - Eliminar editorial (soft delete)
 - **POST** `/publishers/toggle-state/:id` - Cambiar estado
 
+### 📋 Préstamos (`/loans`)
+- **GET** `/loans` - Listar todos los préstamos (admin/librarian)
+- **GET** `/loans/new` - Mostrar formulario de nuevo préstamo
+- **POST** `/loans` - Crear nuevo préstamo
+- **POST** `/loans/:id/approve` - Aprobar préstamo
+- **POST** `/loans/:id/reject` - Rechazar préstamo
+- **POST** `/loans/:id/return` - Marcar como devuelto
+- **POST** `/loans/:id/renew` - Renovar préstamo por 14 días
+- **GET** `/profile/my-loans` - Ver mis préstamos (usuarios)
+
 ## Funcionalidades Destacadas
 
 ### 🔒 Sistema de Seguridad
@@ -240,10 +288,21 @@ nodejs-crud/
 - **Configuración**: Ajustes del sistema
 - **Monitoreo**: Estado de la aplicación
 
-### 🔔 Sistema de Notificaciones
-- **Alertas**: Mensajes de éxito, error e información
-- **Auto-dismiss**: Desaparición automática después de 5 segundos
-- **Persistencia**: Mantiene mensajes entre redirecciones
+### 🔔 Sistema de Notificaciones Inteligente
+- **Notificaciones dinámicas**: Basadas en datos reales de la base de datos
+- **Préstamos vencidos**: Alertas automáticas para libros no devueltos
+- **Próximos vencimientos**: Notificaciones 3 días antes del vencimiento
+- **Renovación directa**: Botón de renovación desde las notificaciones
+- **Contador visual**: Indicador numérico en el icono de notificaciones
+- **Auto-actualización**: Se actualizan automáticamente al cambiar el estado de los préstamos
+
+### 📋 Gestión Avanzada de Préstamos
+- **Estados múltiples**: Solicitado, aprobado, rechazado, devuelto, vencido
+- **Flujo completo**: Desde solicitud hasta devolución
+- **Renovación automática**: Extensión de 14 días con un clic
+- **Filtros inteligentes**: Por estado, usuario, libro y fechas
+- **Control de autorización**: Solo usuarios autorizados pueden gestionar préstamos
+- **Historial completo**: Registro de todas las transacciones
 
 ## Instalación y Configuración
 
@@ -284,27 +343,41 @@ nodejs-crud/
    SESSION_SECRET=tu_clave_secreta_aqui
    ```
 
-5. **Crear usuarios por defecto**
+5. **Configurar la tabla de préstamos**
    ```bash
-   node create-default-users.js
+   node scripts/setup-loans-table.js
    ```
 
-6. **Iniciar la aplicación**
+6. **Crear usuarios por defecto**
+   ```bash
+   node scripts/create-default-users.js
+   ```
+
+7. **Crear datos de prueba (opcional)**
+   ```bash
+   node scripts/create-test-data.js
+   node scripts/create-test-loans.js
+   ```
+
+8. **Iniciar la aplicación**
    ```bash
    npm start
    ```
 
-7. **Acceder a la aplicación**
+9. **Acceder a la aplicación**
    - Abrir navegador en: `http://localhost:3001`
 
 ### Verificación de la Instalación
 
 ```bash
 # Verificar estructura de la base de datos
-node check-database.js
+node scripts/check-database.js
 
 # Verificar usuarios creados
-node check-users.js
+node scripts/check-users.js
+
+# Verificar funcionamiento del sistema de préstamos
+node scripts/create-test-loans.js
 ```
 
 ## Usuarios por Defecto
@@ -365,10 +438,14 @@ Al ejecutar `create-default-users.js`, se crean los siguientes usuarios:
 
 | Script | Descripción |
 |--------|-------------|
-| `create-default-users.js` | Crea usuarios por defecto del sistema |
-| `check-database.js` | Verifica la estructura de la base de datos |
-| `check-users.js` | Verifica los usuarios existentes |
-| `reset-password.js` | Herramienta para resetear contraseñas |
+| `scripts/create-default-users.js` | Crea usuarios por defecto del sistema |
+| `scripts/create-test-data.js` | Crea datos de prueba para desarrollo |
+| `scripts/create-test-loans.js` | Crea préstamos de prueba para testing |
+| `scripts/setup-loans-table.js` | Configura la tabla de préstamos correctamente |
+| `scripts/check-database.js` | Verifica la estructura de la base de datos |
+| `scripts/check-users.js` | Verifica los usuarios existentes |
+| `scripts/create-user.js` | Crea un usuario individual específico |
+| `scripts/reset-password.js` | Resetea la contraseña de un usuario |
 
 ## Características Técnicas
 
@@ -411,9 +488,29 @@ npx nodemon app.js
 ### Testing
 ```bash
 # Verificar funcionamiento
-node check-database.js
-node check-users.js
+node scripts/check-database.js
+node scripts/check-users.js
 ```
+
+### Pruebas del Sistema de Préstamos
+
+Para probar el sistema completo de préstamos:
+
+1. **Crear datos de prueba**
+   ```bash
+   node scripts/create-test-data.js
+   node scripts/create-test-loans.js
+   ```
+
+2. **Flujo de prueba recomendado**:
+   - Iniciar sesión como usuario (`usuario` / `usuario123`)
+   - Navegar al catálogo de libros
+   - Solicitar un préstamo de un libro
+   - Cerrar sesión e iniciar como bibliotecario (`librarian` / `librarian123`)
+   - Ir a "Gestión de Préstamos" y aprobar la solicitud
+   - Verificar notificaciones en el perfil del usuario
+   - Probar la renovación de préstamos desde las notificaciones
+   - Marcar el libro como devuelto desde la gestión de préstamos
 
 ## Resolución de Problemas
 
@@ -429,8 +526,17 @@ node check-users.js
    - Verificar procesos que usen el puerto 3001
 
 3. **Usuarios no creados**
-   - Ejecutar `node create-default-users.js`
-   - Verificar con `node check-users.js`
+   - Ejecutar `node scripts/create-default-users.js`
+   - Verificar con `node scripts/check-users.js`
+
+4. **Problemas con préstamos**
+   - Ejecutar `node scripts/setup-loans-table.js`
+   - Verificar estructura con `node scripts/check-database.js`
+   - Crear datos de prueba con `node scripts/create-test-loans.js`
+
+5. **Notificaciones no aparecen**
+   - Verificar que existan préstamos vencidos o próximos a vencer
+   - Comprobar que el middleware de notificaciones esté activo
 
 ### Logs de Depuración
 El sistema incluye logs detallados para facilitar la depuración:
@@ -438,6 +544,77 @@ El sistema incluye logs detallados para facilitar la depuración:
 - Errores de autenticación
 - Operaciones CRUD
 - Estados de sesión
+
+## Estado del Proyecto - ✅ COMPLETADO
+
+### ✅ Características Implementadas y Funcionando
+
+#### 🔐 Sistema de Autenticación y Autorización
+- ✅ Login/logout seguro con bcrypt
+- ✅ Control de roles (Admin, Bibliotecario, Usuario)
+- ✅ Middleware de protección de rutas
+- ✅ Sesiones persistentes y seguras
+
+#### 👥 Gestión de Usuarios
+- ✅ CRUD completo de usuarios (solo Admin)
+- ✅ Perfiles de usuario personalizables
+- ✅ Cambio de contraseña seguro
+- ✅ Activación/desactivación de cuentas
+
+#### 📚 Gestión de Catálogo
+- ✅ CRUD completo de libros con paginación
+- ✅ Gestión de autores, categorías y editoriales
+- ✅ Soft delete y restauración de libros
+- ✅ Filtros avanzados y búsqueda
+
+#### 📋 Sistema de Préstamos (NUEVA FUNCIONALIDAD)
+- ✅ **Flujo completo de préstamos**: Solicitud → Aprobación → Devolución
+- ✅ **Estados múltiples**: solicitado, aprobado, rechazado, devuelto, vencido
+- ✅ **Renovación automática**: Extensión de 14 días con un clic
+- ✅ **Control de autorización**: Solo propietarios y bibliotecarios pueden gestionar
+- ✅ **Gestión administrativa**: Panel completo para admin/bibliotecarios
+- ✅ **Historial personal**: "Mis Préstamos" para cada usuario
+
+#### 🔔 Sistema de Notificaciones Inteligente (NUEVA FUNCIONALIDAD)
+- ✅ **Notificaciones dinámicas** basadas en datos reales de la BD
+- ✅ **Préstamos vencidos**: Alertas automáticas para libros no devueltos
+- ✅ **Próximos vencimientos**: Notificaciones 3 días antes del vencimiento
+- ✅ **Renovación directa**: Botón de renovación desde las notificaciones
+- ✅ **Contador visual**: Indicador numérico en el icono de campana
+- ✅ **Auto-actualización**: Se actualizan al cambiar estados de préstamos
+
+#### 🎨 Interfaz de Usuario
+- ✅ Diseño responsive con Bootstrap 5
+- ✅ Iconografía consistente con Font Awesome
+- ✅ Flash messages para feedback inmediato
+- ✅ Paginación inteligente en todas las listas
+- ✅ Filtros avanzados por múltiples criterios
+
+#### 🛠️ Herramientas de Desarrollo
+- ✅ Scripts de configuración automatizados
+- ✅ Datos de prueba y usuarios por defecto
+- ✅ Verificación de base de datos
+- ✅ Documentación completa
+
+### 🎯 Funcionalidades Destacadas Recientemente Implementadas
+
+1. **Botón "Gestión de Préstamos"** - Ahora funciona correctamente y muestra todos los préstamos
+2. **Botón "Mis Préstamos"** - Redirige correctamente a la página de préstamos del usuario
+3. **Sistema de Notificaciones Real** - Basado en datos actuales de la base de datos
+4. **Renovación de Préstamos** - Funcionalidad completa desde las notificaciones
+5. **Estados de Préstamos en Español** - Interfaz completamente localizada
+6. **Limpieza del Proyecto** - Estructura organizada y archivos innecesarios removidos
+
+### 🔍 Verificación del Sistema
+
+El sistema ha sido completamente probado y verificado:
+- ✅ Base de datos correctamente configurada
+- ✅ Usuarios por defecto creados y funcionales
+- ✅ Flujo completo de préstamos operativo
+- ✅ Notificaciones dinámicas funcionando
+- ✅ Todos los endpoints respondiendo correctamente
+- ✅ Interfaz responsive y moderna
+- ✅ Documentación completa y actualizada
 
 ## Roadmap y Futuras Mejoras
 
