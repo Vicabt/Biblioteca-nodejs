@@ -1,0 +1,328 @@
+<div class="container-fluid px-4 mt-4">
+    <div class="row">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Inicio</a></li>
+                    <li class="breadcrumb-item active">Mi Perfil</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-8">
+            <h1>Mi Perfil</h1>
+            <p class="lead">Gestiona tu información personal y cuenta de usuario</p>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="/profile/edit" class="btn btn-primary">
+                <i class="fas fa-edit me-2"></i>Editar Perfil
+            </a>
+            <a href="/profile/change-password" class="btn btn-warning ms-2">
+                <i class="fas fa-key me-2"></i>Cambiar Contraseña
+            </a>
+        </div>
+    </div>
+    
+    <% if (typeof error !== 'undefined' && error && error.length > 0) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i><%= error %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <% } %>
+    
+    <% if (typeof success !== 'undefined' && success && success.length > 0) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i><%= success %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <% } %>
+
+    <% if (typeof hasNotifications !== 'undefined' && hasNotifications) { %>
+    <!-- Sección de notificaciones -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm border-danger">
+                <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-bell me-2"></i>Notificaciones
+                        <span class="badge bg-light text-danger ms-2"><%= typeof notificationCount !== 'undefined' ? notificationCount : 0 %></span>
+                    </h5>
+                    <button type="button" class="btn btn-sm btn-light" data-bs-toggle="collapse" data-bs-target="#notificationsCollapse">
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                </div>
+                <div class="collapse show" id="notificationsCollapse">
+                    <div class="card-body">
+                        <div class="list-group">
+                            <!-- Ejemplo de notificación -->
+                            <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                <div>
+                                    <i class="fas fa-book text-warning me-2"></i>
+                                    <strong>Libro vencido:</strong> Tiene un préstamo pendiente de "Cien años de soledad".
+                                    <small class="text-muted d-block mt-1">Venció hace 3 días</small>
+                                </div>
+                                <div>
+                                    <a href="#" class="btn btn-sm btn-outline-primary">Renovar</a>
+                                </div>
+                            </div>
+                            <!-- Otra notificación -->
+                            <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                <div>
+                                    <i class="fas fa-info-circle text-info me-2"></i>
+                                    <strong>Reserva disponible:</strong> El libro "El principito" ya está disponible.
+                                    <small class="text-muted d-block mt-1">Disponible hasta: 30/05/2025</small>
+                                </div>
+                                <div>
+                                    <a href="#" class="btn btn-sm btn-outline-success">Retirar</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <% } %>
+    
+    <div class="row">
+        <!-- Tarjeta de información personal -->
+        <div class="col-lg-6">
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-user-circle me-2"></i>Información Personal
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4 text-center">
+                        <div class="col-12">
+                            <div class="avatar-container mb-3">
+                                <i class="fas fa-user-circle" style="font-size: 80px; color: #3498db;"></i>
+                            </div>
+                            <h4><%= user.username %></h4>
+                            <p class="text-muted mb-1"><%= user.email %></p>
+                            <span class="badge bg-<%= user.role === 'admin' ? 'danger' : user.role === 'librarian' ? 'warning' : 'info' %> mb-2">
+                                <%= user.role === 'admin' ? 'Administrador' : user.role === 'librarian' ? 'Bibliotecario' : 'Usuario' %>
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <p class="mb-0 fw-bold">Usuario:</p>
+                        </div>
+                        <div class="col-sm-8">
+                            <p class="text-muted mb-0"><%= user.username %></p>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <p class="mb-0 fw-bold">Email:</p>
+                        </div>
+                        <div class="col-sm-8">
+                            <p class="text-muted mb-0"><%= user.email %></p>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <p class="mb-0 fw-bold">Rol:</p>
+                        </div>
+                        <div class="col-sm-8">
+                            <p class="text-muted mb-0">
+                                <% if (user.role === 'admin') { %>
+                                    <i class="fas fa-user-shield me-1 text-danger"></i> Administrador
+                                <% } else if (user.role === 'librarian') { %>
+                                    <i class="fas fa-user-tie me-1 text-warning"></i> Bibliotecario
+                                <% } else { %>
+                                    <i class="fas fa-user me-1 text-info"></i> Usuario
+                                <% } %>
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <p class="mb-0 fw-bold">Estado:</p>
+                        </div>
+                        <div class="col-sm-8">
+                            <p class="mb-0">
+                                <span class="badge rounded-pill bg-<%= user.status === 'active' ? 'success' : 'secondary' %>">
+                                    <% if (user.status === 'active') { %>
+                                        <i class="fas fa-check-circle me-1"></i> Activo
+                                    <% } else { %>
+                                        <i class="fas fa-times-circle me-1"></i> Inactivo
+                                    <% } %>
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tarjeta de actividad y acciones rápidas -->
+        <div class="col-lg-6">
+            <!-- Acciones rápidas -->
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-cogs me-2"></i>Acciones Rápidas
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-3">
+                        <a href="/profile/edit" class="btn btn-outline-primary btn-lg">
+                            <i class="fas fa-user-edit me-2"></i>Editar Información Personal
+                            <small class="d-block mt-1">Actualiza tu nombre de usuario y correo electrónico</small>
+                        </a>
+                        
+                        <a href="/profile/change-password" class="btn btn-outline-warning btn-lg">
+                            <i class="fas fa-key me-2"></i>Cambiar Contraseña
+                            <small class="d-block mt-1">Actualiza tu contraseña de acceso</small>
+                        </a>
+                        
+                        <% if (user.role === 'admin') { %>
+                        <a href="/admin/users" class="btn btn-outline-danger btn-lg">
+                            <i class="fas fa-users-cog me-2"></i>Gestión de Usuarios
+                            <small class="d-block mt-1">Administrar usuarios del sistema</small>
+                        </a>
+                        <% } %>
+                        
+                        <a href="/" class="btn btn-outline-secondary">
+                            <i class="fas fa-home me-2"></i>Volver al Inicio
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Estadísticas y actividad -->
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-chart-bar me-2"></i>Actividad y Estadísticas
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="info-box p-3 border rounded mb-3 bg-light">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-calendar me-3" style="font-size: 24px; color: #3498db;"></i>
+                                    <div>
+                                        <h6 class="mb-0">Miembro desde</h6>
+                                        <span class="text-muted">
+                                            <%= new Date(user.created_at || Date.now()).toLocaleDateString('es-ES') %>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <% if (user.role !== 'admin') { %>
+                            <div class="col-md-6">
+                                <div class="info-box p-3 border rounded mb-3 bg-light">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-book me-3" style="font-size: 24px; color: #e74c3c;"></i>
+                                        <div>
+                                            <h6 class="mb-0">Libros prestados</h6>
+                                            <span class="badge bg-info">0</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <% } %>
+                    </div>
+                    
+                    <div class="alert alert-info mt-3">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Nota:</strong> Esta área mostrará tu actividad en la biblioteca.
+                    </div>
+                </div>
+            </div>
+
+            <% if (user.role === 'admin') { %>
+            <!-- Sección de Administración (solo para administradores) -->
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-user-shield me-2"></i>Panel de Administración
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="mb-3">Como administrador, tienes acceso a las siguientes herramientas de gestión:</p>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100 border-danger">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-users" style="font-size: 40px; color: #e74c3c;"></i>
+                                    <h5 class="mt-3">Gestión de Usuarios</h5>
+                                    <p class="text-muted">Administra los usuarios del sistema, crea nuevos usuarios y gestiona roles y permisos.</p>
+                                    <a href="/admin/users" class="btn btn-outline-danger">
+                                        <i class="fas fa-users-cog me-2"></i>Gestionar Usuarios
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100 border-secondary">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-chart-line" style="font-size: 40px; color: #7f8c8d;"></i>
+                                    <h5 class="mt-3">Estadísticas del Sistema</h5>
+                                    <p class="text-muted">Visualiza estadísticas de uso, reportes y análisis de datos de la biblioteca.</p>
+                                    <a href="#" class="btn btn-outline-secondary">
+                                        <i class="fas fa-chart-pie me-2"></i>Ver Estadísticas
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-3">
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100 border-warning">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-cog" style="font-size: 40px; color: #f39c12;"></i>
+                                    <h5 class="mt-3">Configuración</h5>
+                                    <p class="text-muted">Ajusta las configuraciones generales del sistema y personaliza parámetros.</p>
+                                    <a href="#" class="btn btn-outline-warning">
+                                        <i class="fas fa-sliders-h me-2"></i>Configurar
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100 border-info">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-file-alt" style="font-size: 40px; color: #3498db;"></i>
+                                    <h5 class="mt-3">Registros del Sistema</h5>
+                                    <p class="text-muted">Revisa los logs del sistema, actividad de usuarios y eventos importantes.</p>
+                                    <a href="#" class="btn btn-outline-info">
+                                        <i class="fas fa-clipboard-list me-2"></i>Ver Registros
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <% } %>
+        </div>
+    </div>
+</div>
+
+

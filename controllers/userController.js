@@ -1,13 +1,13 @@
 const bcrypt = require('bcryptjs');
 const UserModel = require('../models/userModel');
 
-const UserController = {
-    // Listar usuarios (solo admin)
+const UserController = {    // Listar usuarios (solo admin)
     async listUsers(req, res) {
         try {
             const page = parseInt(req.query.page) || 1;
             const { role, status } = req.query;
             
+            // Obtener lista de usuarios con paginación
             const result = await UserModel.listUsers({ 
                 role, 
                 status, 
@@ -15,8 +15,12 @@ const UserController = {
                 limit: 10 
             });
 
+            // Registrar información para depuración
+            console.log(`Listando usuarios: Encontrados ${result.users.length} usuarios, página ${result.page} de ${result.totalPages}`);
+            
             res.render('admin/users/list', {
                 title: 'Gestión de Usuarios',
+                pageTitle: 'Gestión de Usuarios',
                 users: result.users,
                 currentPage: result.page,
                 totalPages: result.totalPages,
@@ -24,13 +28,14 @@ const UserController = {
                 status,
                 error: req.flash('error'),
                 success: req.flash('success'),
-                user: req.session.user || null,
+                // Usamos res.locals.user que se establece en el middleware en app.js
                 userName: req.session.user ? req.session.user.username : undefined,
                 userImagePath: req.session.user && req.session.user.imagePath ? req.session.user.imagePath : undefined,
+                appName: 'Biblioteca CRUD'
             });
         } catch (error) {
             console.error('Error al listar usuarios:', error);
-            req.flash('error', 'Error al cargar la lista de usuarios');
+            req.flash('error', `Error al cargar la lista de usuarios: ${error.message}`);
             res.redirect('/');
         }
     },

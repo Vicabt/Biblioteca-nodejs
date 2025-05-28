@@ -52,3 +52,6 @@ bower_components/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Auth
+AUTH-HELP.mod

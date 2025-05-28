@@ -5,10 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     
     <title><%= typeof title !== 'undefined' ? title : 'Biblioteca CRUD' %></title>
-
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <style>      .sidebar-custom {
+    <style>
+      /* Estilos existentes */
+      .sidebar-custom {
         background: linear-gradient(180deg, #b3541e 0%, #e07a3f 100%);
         color: #fff;
         min-height: 100vh;
@@ -30,7 +31,8 @@
         background: #fff2e0;
         color: #b3541e !important;
         border-radius: 0.5rem;
-      }      .sidebar-custom .sidebar-logo {
+      }
+      .sidebar-custom .sidebar-logo {
         margin-bottom: 2rem;
         align-self: center;
       }
@@ -45,7 +47,8 @@
         text-align: left;
         padding-left: 1rem;
         width: 100%;
-      }      .sidebar-custom .sidebar-footer {
+      }
+      .sidebar-custom .sidebar-footer {
         position: absolute;
         bottom: 0;
         left: 0;
@@ -75,29 +78,78 @@
       .header-custom .user-info img {
         border: 2px solid #e07a3f;
       }
+      
+      /* Estilos adicionales para el dropdown */
+      .dropdown-menu {
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        min-width: 220px;
+      }
+      .dropdown-item {
+        padding: 10px 16px;
+        transition: all 0.2s ease;
+      }
+      .dropdown-item:hover {
+        background-color: #fff2e0;
+      }
+      .dropdown-item.text-danger:hover {
+        background-color: #ffeeee;
+      }
+      .user-dropdown-toggle {
+        cursor: pointer;
+        transition: all 0.2s ease;
+        padding: 6px 12px;
+        border-radius: 50px;
+      }
+      .user-dropdown-toggle:hover {
+        background-color: rgba(255, 242, 224, 0.7);
+      }
+      .user-dropdown-toggle::after {
+        margin-left: 0.5em;
+      }
+      .pulse {
+        animation: pulse 2s infinite;
+      }
+      @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+      }
     </style>
 </head>
 <body>
 <div class="container-fluid min-vh-100 d-flex flex-column p-0">
   <div class="row flex-grow-1 m-0">
-    <!-- Sidebar -->    <nav class="col-12 col-md-3 col-lg-2 d-md-block sidebar-custom sidebar shadow-sm p-0">
-      <div class="sidebar-logo d-flex justify-content-center align-items-center">
+    <!-- Sidebar -->
+    <nav class="col-12 col-md-3 col-lg-2 d-md-block sidebar-custom sidebar shadow-sm p-0">
+      <div class="sidebar-logo d-flex justify-content-center align-items-center"> 
         <img src="/images/biblioteca.jpg" alt="Logo" width="56" height="56" class="rounded-circle" style="object-fit:cover;">
       </div>
       <div class="sidebar-title"><%= typeof appName !== 'undefined' ? appName : 'Biblioteca CRUD' %></div>
-      <ul class="nav flex-column w-100">        <li class="nav-item w-100"><a class="nav-link d-flex align-items-center" href="/"><i class="fa fa-home me-2"></i>Inicio</a></li>
-        <li class="nav-item w-100"><a class="nav-link d-flex align-items-center" href="/authors"><i class="fa fa-user me-2"></i>Autores</a></li>
-        <li class="nav-item w-100"><a class="nav-link d-flex align-items-center" href="/publishers"><i class="fa fa-building me-2"></i>Editoriales</a></li>        <li class="nav-item w-100"><a class="nav-link d-flex align-items-center" href="/categories"><i class="fa fa-tags me-2"></i>Categorías</a></li>
-        <li class="nav-item w-100"><a class="nav-link d-flex align-items-center" href="/books"><i class="fa fa-book me-2"></i>Libros</a></li>
-        <li class="nav-item w-100"><a class="nav-link d-flex align-items-center" href="/books/restore"><i class="fa fa-trash-restore me-2"></i>Restaurar Libros</a></li>
-        <li class="nav-item w-100 mt-3">
-            <a class="nav-link d-flex align-items-center text-danger" href="/auth/logout">
-            <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
-            </a>
+      <ul class="nav flex-column w-100">
+        <li class="nav-item w-100">
+          <a class="nav-link d-flex align-items-center" href="/"><i class="fa fa-home me-2"></i>Inicio</a>
         </li>
-        <% if (typeof user !== 'undefined' && user) { %>
-        
-        <% } %>
+        <li class="nav-item w-100">
+          <a class="nav-link d-flex align-items-center" href="/authors"><i class="fa fa-user me-2"></i>Autores</a>
+        </li>
+        <li class="nav-item w-100">
+          <a class="nav-link d-flex align-items-center" href="/publishers"><i class="fa fa-building me-2"></i>Editoriales</a>
+        </li>
+        <li class="nav-item w-100">
+          <a class="nav-link d-flex align-items-center" href="/categories"><i class="fa fa-tags me-2"></i>Categorías</a>
+        </li>
+        <li class="nav-item w-100">
+          <a class="nav-link d-flex align-items-center" href="/books"><i class="fa fa-book me-2"></i>Libros</a>
+        </li>
+        <li class="nav-item w-100">
+          <a class="nav-link d-flex align-items-center" href="/books/restore"><i class="fa fa-trash-restore me-2"></i>Restaurar Libros</a>
+        </li>
+        <li class="nav-item w-100 mt-3">
+          <a class="nav-link d-flex align-items-center text-danger" href="/auth/logout">
+            <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
+          </a>
+        </li>
       </ul>
       <div class="sidebar-footer">
         Copyright © <%= new Date().getFullYear() %> Vicab66. Versión 1.0
@@ -107,17 +159,70 @@
     <div class="col p-0 d-flex flex-column" style="min-height:100vh;">
       <!-- Header -->
       <header class="header-custom position-relative py-3 px-4">
-        <span class="display-5  fw-bold w-100"><%= typeof pageTitle !== 'undefined' ? pageTitle : 'Panel principal' %></span>
+        <span class="display-5 fw-bold w-100"><%= typeof pageTitle !== 'undefined' ? pageTitle : 'Panel principal' %></span>
         <div class="user-info d-flex align-items-center">
-          <% if (typeof userImagePath !== 'undefined' && userImagePath) { %>
-            <img src="<%= userImagePath %>" alt="Usuario" width="32" height="32" class="rounded-circle me-2" style="object-fit:cover;">
+          <% if (typeof user !== 'undefined' && user) { %>
+            <!-- Menú desplegable del usuario -->
+            <div class="dropdown">
+              <a href="#" class="d-flex align-items-center text-decoration-none user-dropdown-toggle" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <% if (typeof userImagePath !== 'undefined' && userImagePath) { %>
+                  <img src="<%= userImagePath %>" alt="Usuario" width="38" height="38" class="rounded-circle me-2" style="object-fit:cover;">
+                <% } else { %>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="38" height="38" fill="currentColor" class="bi bi-person-circle me-2" viewBox="0 0 16 16">
+                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+                    <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
+                  </svg>
+                <% } %>
+                <span class="fw-semibold me-1"><%= typeof userName !== 'undefined' ? userName : user.username %></span>
+                <i class="fas fa-chevron-down ms-1" style="font-size: 12px;"></i>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="userDropdown">
+                <div class="p-3 border-bottom text-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" fill="currentColor" class="bi bi-person-circle mb-2 text-primary" viewBox="0 0 16 16">
+                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+                    <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
+                  </svg>
+                  <p class="mb-0 fw-bold"><%= typeof userName !== 'undefined' ? userName : user.username %></p>
+                  <p class="text-muted small mb-0"><%= user.email || '' %></p>
+                  <div class="mt-2">
+                    <span class="badge bg-<%= user.role === 'admin' ? 'danger' : user.role === 'librarian' ? 'warning' : 'info' %>">
+                      <%= user.role === 'admin' ? 'Administrador' : user.role === 'librarian' ? 'Bibliotecario' : 'Usuario' %>
+                    </span>
+                  </div>
+                </div>
+                <li>
+                  <a class="dropdown-item" href="/profile">
+                    <i class="fas fa-user-edit me-2 text-primary"></i>Mi Perfil
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="/profile/edit">
+                    <i class="fas fa-cog me-2 text-secondary"></i>Editar Perfil
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="/profile/change-password">
+                    <i class="fas fa-key me-2 text-warning"></i>Cambiar Contraseña
+                  </a>
+                </li>
+                <div class="dropdown-divider"></div>
+                <li>
+                  <a class="dropdown-item text-danger" href="/auth/logout">
+                    <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
+                  </a>
+                </li>
+              </ul>
+            </div>
           <% } else { %>
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-person-bounding-box rounded-circle me-2" viewBox="0 0 16 16"> 
-              <path d="M1.5 1a.5.5 0 0 0-.5.5v3a.5.5 0 0 1-1 0v-3A1.5 1.5 0 0 1 1.5 0h3a.5.5 0 0 1 0 1zM11 .5a.5.5 0 0 1 .5-.5h3A1.5 1.5 0 0 1 16 1.5v3a.5.5 0 0 1-1 0v-3a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 1-.5-.5M.5 11a.5.5 0 0 1 .5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 1 0 1h-3A1.5 1.5 0 0 1 0 14.5v-3a.5.5 0 0 1 .5-.5m15 0a.5.5 0 0 1 .5.5v3a1.5 1.5 0 0 1-1.5 1.5h-3a.5.5 0 0 1 0-1h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 1 .5-.5"/>
-              <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm8-9a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
-            </svg>
+            <!-- Enlace para inicio de sesión -->
+            <a href="/auth/login" class="d-flex align-items-center text-decoration-none">
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-box-arrow-in-right me-2" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M6 3.5a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-2a.5.5 0 0 0-1 0v2A1.5 1.5 0 0 0 6.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-8A1.5 1.5 0 0 0 5 3.5v2a.5.5 0 0 0 1 0z"/>
+                <path fill-rule="evenodd" d="M11.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H1.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z"/>
+              </svg>
+              <span class="fw-semibold">Iniciar Sesión</span>
+            </a>
           <% } %>
-          <span class="fw-semibold me-3"><%= typeof userName !== 'undefined' ? userName : 'Usuario' %></span>
         </div>
       </header>
       <!-- Contenido principal -->
@@ -129,4 +234,4 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 </body>
-</html> 
+</html>

@@ -1,0 +1,75 @@
+<%
+// Parámetros esperados:
+// currentPage: Página actual (número)
+// totalPages: Número total de páginas
+// baseUrl: URL base para los enlaces
+// queryParams: Parámetros de consulta adicionales (opcional)
+
+// Configuración de paginación
+const displayRange = 2; // Número de páginas mostradas a cada lado de la página actual
+let queryString = '';
+
+// Construir query string para parámetros adicionales
+if (typeof queryParams !== 'undefined' && queryParams) {
+    const params = [];
+    for (const [key, value] of Object.entries(queryParams)) {
+        if (value) {
+            params.push(`${key}=${value}`);
+        }
+    }
+    if (params.length > 0) {
+        queryString = '&' + params.join('&');
+    }
+}
+%>
+
+<% if (totalPages > 1) { %>
+<nav aria-label="Navegación de páginas">
+    <ul class="pagination justify-content-center">
+        <!-- Botón Anterior -->
+        <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+            <a class="page-link" href="<%= baseUrl %>?page=<%= currentPage - 1 %><%= queryString %>" aria-label="Anterior">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+        
+        <!-- Primera página y elipsis si es necesario -->
+        <% if (currentPage > displayRange + 1) { %>
+            <li class="page-item">
+                <a class="page-link" href="<%= baseUrl %>?page=1<%= queryString %>">1</a>
+            </li>
+            <% if (currentPage > displayRange + 2) { %>
+                <li class="page-item disabled">
+                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">...</a>
+                </li>
+            <% } %>
+        <% } %>
+        
+        <!-- Páginas alrededor de la página actual -->
+        <% for (let i = Math.max(1, currentPage - displayRange); i <= Math.min(totalPages, currentPage + displayRange); i++) { %>
+            <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                <a class="page-link" href="<%= baseUrl %>?page=<%= i %><%= queryString %>"><%= i %></a>
+            </li>
+        <% } %>
+        
+        <!-- Última página y elipsis si es necesario -->
+        <% if (currentPage < totalPages - displayRange) { %>
+            <% if (currentPage < totalPages - displayRange - 1) { %>
+                <li class="page-item disabled">
+                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">...</a>
+                </li>
+            <% } %>
+            <li class="page-item">
+                <a class="page-link" href="<%= baseUrl %>?page=<%= totalPages %><%= queryString %>"><%= totalPages %></a>
+            </li>
+        <% } %>
+        
+        <!-- Botón Siguiente -->
+        <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+            <a class="page-link" href="<%= baseUrl %>?page=<%= currentPage + 1 %><%= queryString %>" aria-label="Siguiente">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+    </ul>
+</nav>
+<% } %>

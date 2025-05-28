@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS loans (
 );
 
 -- Insertar usuario administrador inicial (contraseña: admin123)
+-- Este hash corresponde a 'admin123' generado con bcryptjs (10 rounds)
 INSERT INTO users (username, email, password, role, status) 
-VALUES ('admin', 'admin@biblioteca.com', '$2b$10$YourHashedPasswordHere', 'admin', 'active')
-ON DUPLICATE KEY UPDATE id_user = id_user; 
+VALUES ('admin', 'admin@biblioteca.com', '$2b$10$y9VmHQpCMUQkX0DampYwmOTixhcG9zECsRpDn50823g5IfvUPE.s.', 'admin', 'active')
+ON DUPLICATE KEY UPDATE id_user = id_user;

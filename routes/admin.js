@@ -11,8 +11,4 @@ router.get('/users/:id/edit', isAuthenticated, hasRole(['admin']), UserControlle
 router.post('/users/:id', isAuthenticated, hasRole(['admin']), UserController.updateUser);
 router.post('/users/:id/toggle-status', isAuthenticated, hasRole(['admin']), UserController.toggleStatus);
 
-// Rutas para cambio de contraseña (accesibles para todos los usuarios autenticados)
-router.get('/profile/change-password', isAuthenticated, UserController.showChangePasswordForm);
-router.post('/profile/change-password', isAuthenticated, UserController.changePassword);
-
-module.exports = router; 
+module.exports = router;

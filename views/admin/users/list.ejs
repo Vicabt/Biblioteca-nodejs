@@ -1,13 +1,16 @@
-<%- include('../../partials/header') %>
-
 <div class="container-fluid px-4">
     <h1 class="mt-4">Gestión de Usuarios</h1>
-    
-    <% if (error) { %>
-        <div class="alert alert-danger"><%= error %></div>
+      <% if (typeof error !== 'undefined' && error && error.length > 0) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i><%= error %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
     <% } %>
-    <% if (success) { %>
-        <div class="alert alert-success"><%= success %></div>
+    <% if (typeof success !== 'undefined' && success && success.length > 0) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i><%= success %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
     <% } %>
 
     <div class="card mb-4">
@@ -67,16 +70,14 @@
                         <% }); %>
                     </tbody>
                 </table>
-            </div>
-
+            </div>            <% if (typeof totalPages !== 'undefined' && totalPages > 0) { %>
             <%- include('../../partials/pagination', { 
                 currentPage, 
                 totalPages,
                 baseUrl: '/admin/users',
                 queryParams: { role, status }
             }) %>
+            <% } %>
         </div>
     </div>
 </div>
-
-<%- include('../../partials/footer') %> 

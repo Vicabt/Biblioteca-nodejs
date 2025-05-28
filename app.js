@@ -42,8 +42,16 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Middleware para hacer disponible el usuario en todas las vistas
 app.use((req, res, next) => {
     res.locals.user = req.session.user || null;
+    // Agregar req.originalUrl a res.locals para poder usarlo en las vistas
+    res.locals.req = {
+        originalUrl: req.originalUrl
+    };
     next();
 });
+
+// Middleware para manejar notificaciones
+const notificationsMiddleware = require('./middleware/notifications');
+app.use(notificationsMiddleware);
 
 // Rutas
 app.use('/', indexRouter);
